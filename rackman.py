@@ -3,6 +3,7 @@
 import pygtk
 pygtk.require('2.0')
 import gtk
+import cairo
 
 
 
@@ -11,7 +12,7 @@ class Master:
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         #self.window = gtk.Window(gtk.WINDOW_POPUP)
         #self.window.set_border_width(10)
-        self.window.set_opacity(0.5)
+        self.window.set_opacity(1)
         #self.window.set_decorated(False)
         #self.window.connect("check-resize", self.resize_window)
         self.window.connect("destroy", lambda w: gtk.main_quit())
@@ -60,7 +61,7 @@ class Slave:
 
         self.window.connect("check-resize", self.resize_window)
         self.window.connect("key-press-event", self.resizing)
-        self.area.connect("expose-event", self.draw)
+        self.area.connect("expose-event", self.draw_cairo)
 
 
 
@@ -92,7 +93,58 @@ class Slave:
 
     def resize_window(self, widget):
         #print self.window.get_size()
-        self.draw()
+        #self.draw_cairo(self.area)
+
+        return
+
+
+    def draw_cairo(self, area, event):
+        self.context = area.window.cairo_create()
+
+        #self.context.clip()
+
+        #print dir(self.context)
+
+        # background
+        self.context.set_source_rgb(0, 1, 0)
+
+        self.context.rectangle(0, 0, event.area.width, event.area.height)
+        self.context.fill()
+        self.context.stroke()
+
+
+        self.context.set_source_rgb(0, 0, 1)    # foreground
+
+        # border
+        self.context.set_line_width(1)
+
+        self.context.rectangle(1, 1, event.area.width-2, event.area.height-2)
+        self.context.stroke()
+
+        # diagonals
+        self.context.set_line_width(1)
+
+        self.context.move_to(0, 0)
+        self.context.line_to(event.area.width, event.area.height)
+        self.context.stroke()
+
+        self.context.move_to(event.area.width, 0)
+        self.context.line_to(0, event.area.height)
+        self.context.stroke()
+
+        # verticals
+        self.context.set_line_width(1)
+        self.context.set_dash([3,3])
+
+        self.context.move_to(event.area.width/2.0, 0)
+        self.context.line_to(event.area.width/2.0, event.area.height)
+        self.context.stroke()
+
+        self.context.move_to(0, event.area.height/2.0)
+        self.context.line_to(event.area.width, event.area.height/2.0)
+        self.context.stroke()
+
+        return False
 
 
     def draw(self, area=None, event=None):
