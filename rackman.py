@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-import pygtk
-pygtk.require('2.0')
+#import pygtk
+#pygtk.require('2.0')
 import gtk
 import cairo
 
@@ -36,14 +36,8 @@ class Master:
 class Slave:
     def __init__(self, parent):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        #self.window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DND)
-        #self.window = gtk.Dialog("My dialog",
-                     #parent.window,
-                     #gtk.DIALOG_DESTROY_WITH_PARENT,
-        #)
         self.window.set_decorated(False)
         #self.window.set_has_frame(True)
-        #self.window.set_frame_dimensions(1, 5, 1, 1)
         self.window.set_resizable(True)
         self.window.set_opacity(0.5)
         #self.window.set_size(400, 300)
@@ -103,8 +97,6 @@ class Slave:
 
         #self.context.clip()
 
-        #print dir(self.context)
-
         # background
         self.context.set_source_rgb(0, 1, 0)
 
@@ -147,71 +139,8 @@ class Slave:
         return False
 
 
-    def draw(self, area=None, event=None):
-        # http://www.eurion.net/python-snippets/snippet/Drawing%20With%20Cairo.html
-        #self.style = self.area.get_style()
-        #self.gc = self.style.fg_gc[gtk.STATE_NORMAL]
-
-        canvas = self.area.window
-
-        self.gc_border = canvas.new_gc(
-                    foreground=gtk.gdk.Color(red=0, green=65000, blue=65000),
-                    #background=gtk.gdk.Color(green=65535),
-                    line_width=3,
-                    line_style=gtk.gdk.LINE_SOLID,
-                    join_style=gtk.gdk.JOIN_MITER,
-        )
-        self.gc_diagonal = canvas.new_gc(
-                    foreground=gtk.gdk.Color(red=0, green=65000, blue=65000),
-                    #background=gtk.gdk.Color(green=65535),
-                    line_width=1,
-                    line_style=gtk.gdk.LINE_SOLID,
-                    join_style=gtk.gdk.JOIN_MITER,
-        )
-        self.gc_center = canvas.new_gc(
-                    foreground=gtk.gdk.Color(red=0, green=65000, blue=65000),
-                    #background=gtk.gdk.Color(green=65535),
-                    line_width=1,
-                    line_style=gtk.gdk.LINE_ON_OFF_DASH,
-                    join_style=gtk.gdk.JOIN_MITER,
-        )
-
-        x, y = self.window.get_size()
-
-        #canvas.draw_line(self.gc, 10, 10, 20, 30)
-        canvas.draw_rectangle(self.gc_border, False, 0,0, x-1,y-1)
-
-        canvas.draw_line(self.gc_diagonal, 0,0, x-1,y-1)
-        canvas.draw_line(self.gc_diagonal, 0,y-1, x-1,0)
-
-        return True
-
-
-
-def main():
-    gtk.main()
-
-
 if __name__ == "__main__":
-    #ruler = Ruler()
     base = Master()
-    #ruler.window.set_transient_for(base.window)
-
     Slave(base)
 
-    #dialog = gtk.Dialog("My dialog",
-                     #base.window,
-                     #gtk.DIALOG_DESTROY_WITH_PARENT,
-                     #)
-    #dialog.set_decorated(False)
-    #dialog.set_opacity(0.5)
-    #dialog.show()
-#
-    #drawing_area = gtk.DrawingArea()
-    #drawing_area.set_size_request(200, 200)
-    #drawable = drawing_area.window
-    #style = drawing_area.get_style()
-    #gc = style.fg_gc[gtk.STATE_NORMAL]
-    #drawable.draw_line(gc, 10, 10, 50, 50)
-
-    main()
+    gtk.main()
