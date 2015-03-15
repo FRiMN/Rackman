@@ -52,35 +52,64 @@ class Slave:
 
 
         self.window.add_events(gtk.gdk.KEY_PRESS_MASK)
+        self.window.add_events(gtk.gdk.BUTTON_PRESS_MASK)
 
         self.window.connect("check-resize", self.resize_window)
         self.window.connect("key-press-event", self.resizing)
         self.area.connect("expose-event", self.draw_cairo)
 
+        self.window.connect("button-press-event", self.begin_move)
+
 
 
 
         #self.window.begin_resize_drag(gtk.gdk.WINDOW_EDGE_EAST, 1, 10, 10, 1)
+        #self.window.begin_resize_drag(gtk.gdk.WINDOW_EDGE_SOUTH, 1, 10, 10, 1)
+
+        #self.window.begin_move_drag(2, 10, 10, 3000)
+        #self.begin_move(self.window, None)
+
+
+    def begin_move(self, widget, event):
+        print 'begin move'
+        print widget
+
+        print 'Clicked at x={}, y={}'.format(event.x, event.y)
+
+        x_root, y_root = widget.get_position()
+        #event = gtk.get_current_event()
+        widget.window.begin_move_drag(
+                        2,
+                        int(event.x), int(event.y),
+                        #x_root, y_root,
+                        #event.time
+                        1000
+        )
+
+        print '--end move\n'
+
+        return True
 
 
     def resizing(self, widget, event):
-        #print event
+        print event.hardware_keycode
 
-        old_x, old_y = widget.get_size()
-        new_x, new_y = old_x, old_y
+        x, y = widget.get_size()
 
         if event.hardware_keycode == 114:   # right
-            new_x = old_x + 1
+            x += 1
         elif event.hardware_keycode == 116: # down
-            new_y = old_y + 1
+            y += 1
         elif event.hardware_keycode == 113: # left
-            new_x = old_x - 2
+            x -= 1
         elif event.hardware_keycode == 111: # up
-            new_y = old_y - 2
+            y -= 1
 
-        #self.area.set_size_request(new_x, new_y)
-        self.area.window.resize(new_x, new_y)
-        self.window.resize(new_x, new_y)
+        elif event.hardware_keycode == 37:  # Ctrl
+            self.begin_move(self.window, event)
+
+        self.area.window.resize(x, y)
+        self.window.resize(x, y)
 
         return True
 
@@ -89,7 +118,7 @@ class Slave:
         #print self.window.get_size()
         #self.draw_cairo(self.area)
 
-        return
+        return True
 
 
     def draw_cairo(self, area, event):
