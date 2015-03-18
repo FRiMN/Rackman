@@ -1,34 +1,83 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# See license in the file LICENSE.
+# This software uses semantic versioning (SemVer v2.0.0).
+
 
 #import pygtk
 #pygtk.require('2.0')
 import gtk
 import cairo
+import math
 
+
+VERSION = '1.0.0'
 
 
 class Master:
     def __init__(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        #self.window = gtk.Window(gtk.WINDOW_POPUP)
-        #self.window.set_border_width(10)
         self.window.set_opacity(1)
-        #self.window.set_decorated(False)
-        #self.window.connect("check-resize", self.resize_window)
+        self.window.set_resizable(False)
+        self.window.set_title("Rackman [Master]")
         self.window.connect("destroy", lambda w: gtk.main_quit())
 
-        #self.button = gtk.Button("Hello World")
-        #self.button.connect("clicked", self.hello, None)
-        #self.window.add(self.button)
-        #self.button.show()
+
+        tableH = gtk.Table(rows=2, columns=4, homogeneous=False)
+        self.window.add(tableH)
+        tableH.set_col_spacings(2)
+        tableH.show()
+
+        label_row = 0,1
+        value_row = 1,2
+
+
+        self.lw = lw = gtk.Label('Ширина')
+        lw.show()
+        tableH.attach(lw, 0,1, *label_row)
+
+        self.vw = vw = gtk.Entry()
+        vw.set_editable(False)
+        vw.set_width_chars(6)
+        vw.show()
+        tableH.attach(vw, 0,1, *value_row)
+
+
+        self.lh = lh = gtk.Label('Высота')
+        lh.show()
+        tableH.attach(lh, 1,2, *label_row)
+
+        self.vh = vh = gtk.Entry()
+        vh.set_editable(False)
+        vh.set_width_chars(6)
+        vh.show()
+        tableH.attach(vh, 1,2, *value_row)
+
+
+        self.ld = ld = gtk.Label('Диагональ')
+        ld.show()
+        tableH.attach(ld, 2,3, *label_row)
+
+        self.vd = vd = gtk.Entry()
+        vd.set_editable(False)
+        vd.set_width_chars(9)
+        vd.show()
+        tableH.attach(vd, 2,3, *value_row)
+
+
+        self.la = la = gtk.Label('Углы (Г / В)')
+        la.show()
+        tableH.attach(la, 3,4, *label_row)
+
+        self.va = va = gtk.Entry()
+        va.set_editable(False)
+        va.set_width_chars(11)
+        va.show()
+        tableH.attach(va, 3,4, *value_row)
+
 
         self.window.show()
-
-    def hello(self, widget, data=None):
-        print "Hello World"
-
-    #def resize_window(self, widget):
-        #print self.window.get_size()
 
 
 
@@ -37,13 +86,15 @@ class Slave:
     def __init__(self, parent):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_decorated(False)
-        #self.window.set_has_frame(True)
+        self.window.set_title("Rackman [Slave]")
         self.window.set_resizable(True)
+        self.window.set_keep_above(True)
+        #self.window.set_transient_for(parent.window)
         self.window.set_opacity(0.5)
-        #self.window.set_size(400, 300)
+
+        self.parent = parent
 
         self.area = gtk.DrawingArea()
-        #self.area.set_size_request(200, 200)
 
         self.window.add(self.area)
 
@@ -58,42 +109,8 @@ class Slave:
         self.window.connect("key-press-event", self.resizing)
         self.area.connect("expose-event", self.draw_cairo)
 
-        self.window.connect("button-press-event", self.begin_move)
-
-
-
-
-        #self.window.begin_resize_drag(gtk.gdk.WINDOW_EDGE_EAST, 1, 10, 10, 1)
-        #self.window.begin_resize_drag(gtk.gdk.WINDOW_EDGE_SOUTH, 1, 10, 10, 1)
-
-        #self.window.begin_move_drag(2, 10, 10, 3000)
-        #self.begin_move(self.window, None)
-
-
-    def begin_move(self, widget, event):
-        print 'begin move'
-        print widget
-
-        print 'Clicked at x={}, y={}'.format(event.x, event.y)
-
-        x_root, y_root = widget.get_position()
-        #event = gtk.get_current_event()
-        widget.window.begin_move_drag(
-                        2,
-                        int(event.x), int(event.y),
-                        #x_root, y_root,
-                        #event.time
-                        1000
-        )
-
-        print '--end move\n'
-
-        return True
-
 
     def resizing(self, widget, event):
-        print event.hardware_keycode
-
         x, y = widget.get_size()
 
         if event.hardware_keycode == 114:   # right
@@ -105,18 +122,23 @@ class Slave:
         elif event.hardware_keycode == 111: # up
             y -= 1
 
-        elif event.hardware_keycode == 37:  # Ctrl
-            self.begin_move(self.window, event)
-
-        self.area.window.resize(x, y)
         self.window.resize(x, y)
 
         return True
 
 
     def resize_window(self, widget):
-        #print self.window.get_size()
-        #self.draw_cairo(self.area)
+        w, h = self.window.get_size()
+
+        gipo = math.sqrt(h*h + w*w)     # гипотенуза
+
+        grad1 = math.degrees( math.asin( h / gipo ) )
+        grad2 = 90 - grad1
+
+        self.parent.vw.set_text( '{:d}px'.format(w) )
+        self.parent.vh.set_text( '{:d}px'.format(h) )
+        self.parent.vd.set_text( '{:.2f}px'.format(gipo) )
+        self.parent.va.set_text( '{:.1f}° / {:.1f}°'.format( round(grad1,2), round(grad2,2) ) )
 
         return True
 
@@ -124,17 +146,15 @@ class Slave:
     def draw_cairo(self, area, event):
         self.context = area.window.cairo_create()
 
-        #self.context.clip()
-
         # background
-        self.context.set_source_rgb(0, 1, 0)
+        self.context.set_source_rgb(1, 1, 1)
 
         self.context.rectangle(0, 0, event.area.width, event.area.height)
         self.context.fill()
         self.context.stroke()
 
 
-        self.context.set_source_rgb(0, 0, 1)    # foreground
+        self.context.set_source_rgb(1, 0, 0)    # foreground
 
         # border
         self.context.set_line_width(1)
