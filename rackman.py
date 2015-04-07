@@ -12,7 +12,7 @@ import cairo
 import math
 
 
-VERSION = '1.1.0'
+VERSION = '1.1.1'
 
 COLORS = {
                 'black':        (0, 0, 0),
@@ -157,8 +157,8 @@ class Slave:
         self.parent = parent
 
         self.area = gtk.DrawingArea()
-        self.background = 1, 1, 1
-        self.foreground = 1, 0, 0
+        self.background = COLORS['white']
+        self.foreground = COLORS['red']
 
         self.window.add(self.area)
 
