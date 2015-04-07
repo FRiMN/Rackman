@@ -12,7 +12,17 @@ import cairo
 import math
 
 
-VERSION = '1.0.0'
+VERSION = '1.1.0'
+
+COLORS = {
+                'black':        (0, 0, 0),
+                'white':        (1, 1, 1),
+                'green':        (0, 1, 0),
+                'blue':         (0, 0, 1),
+                'red':          (1, 0, 0),
+                'orange':       (1, 0.5, 0),
+                'violet':       (0.5, 0, 0.5),
+}
 
 
 class Master:
@@ -24,13 +34,14 @@ class Master:
         self.window.connect("destroy", lambda w: gtk.main_quit())
 
 
-        tableH = gtk.Table(rows=2, columns=4, homogeneous=False)
+        tableH = gtk.Table(rows=3, columns=4, homogeneous=False)
         self.window.add(tableH)
         tableH.set_col_spacings(2)
         tableH.show()
 
-        label_row = 0,1
-        value_row = 1,2
+        menu_row = 0,1
+        label_row = 1,2
+        value_row = 2,3
 
 
         self.lw = lw = gtk.Label('Ширина')
@@ -77,8 +88,59 @@ class Master:
         tableH.attach(va, 3,4, *value_row)
 
 
+        self.menu_items = (
+                    ('/_Background',        None,               None,               0,  '<Branch>'),
+                    ('/Background/_White',  '<alt><shift>W',    self.color_change,  1,  '<RadioItem>'),
+                    ('/Background/Blac_k',  '<alt><shift>K',    self.color_change,  2,  '/Background/White'),
+                    ('/Background/_Green',  '<alt><shift>G',    self.color_change,  3,  '/Background/White'),
+                    ('/Background/_Blue',   '<alt><shift>B',    self.color_change,  4,  '/Background/White'),
+                    ('/Background/_Red',    '<alt><shift>R',    self.color_change,  5,  '/Background/White'),
+                    ('/Background/_Orange', '<alt><shift>O',    self.color_change,  6,  '/Background/White'),
+                    ('/Background/_Violet', '<alt><shift>V',    self.color_change,  7,  '/Background/White'),
+
+                    ('/_Foreground',        None,               None,               0,  '<Branch>'),
+                    ('/Foreground/_Red',    '<ctrl><shift>R',   self.color_change,  5,  '<RadioItem>'),
+                    ('/Foreground/_White',  '<ctrl><shift>W',   self.color_change,  1,  '/Foreground/Red'),
+                    ('/Foreground/Blac_k',  '<ctrl><shift>K',   self.color_change,  2,  '/Foreground/Red'),
+                    ('/Foreground/_Green',  '<ctrl><shift>G',   self.color_change,  3,  '/Foreground/Red'),
+                    ('/Foreground/_Blue',   '<ctrl><shift>B',   self.color_change,  4,  '/Foreground/Red'),
+                    ('/Foreground/_Orange', '<ctrl><shift>O',   self.color_change,  6,  '/Foreground/Red'),
+                    ('/Foreground/_Violet', '<ctrl><shift>V',   self.color_change,  7,  '/Foreground/Red'),
+        )
+
+        menubar = self.get_main_menu()
+        tableH.attach(menubar, 0,4, *menu_row)
+        menubar.show()
+
+        self.ev = gtk.gdk.Event(gtk.gdk.EXPOSE)
+
+
         self.window.show()
 
+
+    def color_change(self, ret, widget):
+        color_name = widget.name.split('/')[-1].lower()
+        color_context = widget.name.split('/')[-2].lower()
+
+        if color_context == 'background':
+            slave.background = COLORS[color_name]
+        elif color_context == 'foreground':
+            slave.foreground = COLORS[color_name]
+        else:
+            pass
+
+        self.ev.area = slave.ea
+        slave.area.emit("expose-event", self.ev)
+
+
+    def get_main_menu(self):
+        accel_group = gtk.AccelGroup()
+
+        self.item_factory = item_factory = gtk.ItemFactory(gtk.MenuBar, "<main>", accel_group)
+        item_factory.create_items(self.menu_items)
+        self.window.add_accel_group(accel_group)
+
+        return item_factory.get_widget("<main>")
 
 
 
@@ -95,6 +157,8 @@ class Slave:
         self.parent = parent
 
         self.area = gtk.DrawingArea()
+        self.background = 1, 1, 1
+        self.foreground = 1, 0, 0
 
         self.window.add(self.area)
 
@@ -145,16 +209,17 @@ class Slave:
 
     def draw_cairo(self, area, event):
         self.context = area.window.cairo_create()
+        self.ea = event.area
 
         # background
-        self.context.set_source_rgb(1, 1, 1)
+        self.context.set_source_rgb(*self.background)
 
         self.context.rectangle(0, 0, event.area.width, event.area.height)
         self.context.fill()
         self.context.stroke()
 
 
-        self.context.set_source_rgb(1, 0, 0)    # foreground
+        self.context.set_source_rgb(*self.foreground)    # foreground
 
         # border
         self.context.set_line_width(1)
@@ -190,6 +255,6 @@ class Slave:
 
 if __name__ == "__main__":
     base = Master()
-    Slave(base)
+    slave = Slave(base)
 
     gtk.main()
