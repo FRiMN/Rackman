@@ -12,7 +12,7 @@ import cairo
 import math
 
 
-VERSION = '1.1.1'
+VERSION = '1.2.1'
 
 COLORS = {
                 'black':        (0, 0, 0),
@@ -22,6 +22,7 @@ COLORS = {
                 'red':          (1, 0, 0),
                 'orange':       (1, 0.5, 0),
                 'violet':       (0.5, 0, 0.5),
+                'pink':       (1, 0.5, 1),
 }
 
 
@@ -97,6 +98,7 @@ class Master:
                     ('/Background/_Red',    '<alt><shift>R',    self.color_change,  5,  '/Background/White'),
                     ('/Background/_Orange', '<alt><shift>O',    self.color_change,  6,  '/Background/White'),
                     ('/Background/_Violet', '<alt><shift>V',    self.color_change,  7,  '/Background/White'),
+                    ('/Background/_Pink',   '<alt><shift>P',    self.color_change,  8,  '/Background/White'),
 
                     ('/_Foreground',        None,               None,               0,  '<Branch>'),
                     ('/Foreground/_Red',    '<ctrl><shift>R',   self.color_change,  5,  '<RadioItem>'),
@@ -106,6 +108,7 @@ class Master:
                     ('/Foreground/_Blue',   '<ctrl><shift>B',   self.color_change,  4,  '/Foreground/Red'),
                     ('/Foreground/_Orange', '<ctrl><shift>O',   self.color_change,  6,  '/Foreground/Red'),
                     ('/Foreground/_Violet', '<ctrl><shift>V',   self.color_change,  7,  '/Foreground/Red'),
+                    ('/Foreground/_Pink',   '<ctrl><shift>P',   self.color_change,  8,  '/Foreground/Red'),
         )
 
         menubar = self.get_main_menu()
