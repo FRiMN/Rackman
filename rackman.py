@@ -12,7 +12,7 @@ import cairo
 import math
 
 
-VERSION = '1.3.0'
+VERSION = '1.3.1'
 
 COLORS = {
                 'black':        (0, 0, 0),
@@ -111,16 +111,16 @@ class Master:
                     ('/Foreground/_Pink',   '<ctrl><shift>P',   self.color_change,      8,  '/Foreground/Red'),
 
                     ('/_Opacity',           None,               None,                   0,  '<Branch>'),
-                    ('/Opacity/_50',        '<ctrl><shift>5',   self.opacity_change,    50, '<RadioItem>'),
-                    ('/Opacity/_10',        '<ctrl><shift>1',   self.opacity_change,    10, '/Opacity/50'),
-                    ('/Opacity/_20',        '<ctrl><shift>2',   self.opacity_change,    20, '/Opacity/50'),
-                    ('/Opacity/_30',        '<ctrl><shift>3',   self.opacity_change,    30, '/Opacity/50'),
-                    ('/Opacity/_40',        '<ctrl><shift>4',   self.opacity_change,    40, '/Opacity/50'),
-                    ('/Opacity/_60',        '<ctrl><shift>6',   self.opacity_change,    60, '/Opacity/50'),
-                    ('/Opacity/_70',        '<ctrl><shift>7',   self.opacity_change,    70, '/Opacity/50'),
-                    ('/Opacity/_80',        '<ctrl><shift>8',   self.opacity_change,    80, '/Opacity/50'),
-                    ('/Opacity/_90',        '<ctrl><shift>9',   self.opacity_change,    90, '/Opacity/50'),
-                    ('/Opacity/_100',       '<ctrl><shift>0',   self.opacity_change,    100,'/Opacity/50'),
+                    ('/Opacity/_50',        '<ctrl>5',          self.opacity_change,    50, '<RadioItem>'),
+                    ('/Opacity/_10',        '<ctrl>1',          self.opacity_change,    10, '/Opacity/50'),
+                    ('/Opacity/_20',        '<ctrl>2',          self.opacity_change,    20, '/Opacity/50'),
+                    ('/Opacity/_30',        '<ctrl>3',          self.opacity_change,    30, '/Opacity/50'),
+                    ('/Opacity/_40',        '<ctrl>4',          self.opacity_change,    40, '/Opacity/50'),
+                    ('/Opacity/_60',        '<ctrl>6',          self.opacity_change,    60, '/Opacity/50'),
+                    ('/Opacity/_70',        '<ctrl>7',          self.opacity_change,    70, '/Opacity/50'),
+                    ('/Opacity/_80',        '<ctrl>8',          self.opacity_change,    80, '/Opacity/50'),
+                    ('/Opacity/_90',        '<ctrl>9',          self.opacity_change,    90, '/Opacity/50'),
+                    ('/Opacity/10_0',       '<ctrl>0',          self.opacity_change,    100,'/Opacity/50'),
         )
 
         menubar = self.get_main_menu()
