@@ -12,7 +12,7 @@ import cairo
 import math
 
 
-VERSION = '1.2.0'
+VERSION = '1.3.0'
 
 COLORS = {
                 'black':        (0, 0, 0),
@@ -22,7 +22,7 @@ COLORS = {
                 'red':          (1, 0, 0),
                 'orange':       (1, 0.5, 0),
                 'violet':       (0.5, 0, 0.5),
-                'pink':       (1, 0.5, 1),
+                'pink':         (1, 0.5, 1),
 }
 
 
@@ -90,25 +90,37 @@ class Master:
 
 
         self.menu_items = (
-                    ('/_Background',        None,               None,               0,  '<Branch>'),
-                    ('/Background/_White',  '<alt><shift>W',    self.color_change,  1,  '<RadioItem>'),
-                    ('/Background/Blac_k',  '<alt><shift>K',    self.color_change,  2,  '/Background/White'),
-                    ('/Background/_Green',  '<alt><shift>G',    self.color_change,  3,  '/Background/White'),
-                    ('/Background/_Blue',   '<alt><shift>B',    self.color_change,  4,  '/Background/White'),
-                    ('/Background/_Red',    '<alt><shift>R',    self.color_change,  5,  '/Background/White'),
-                    ('/Background/_Orange', '<alt><shift>O',    self.color_change,  6,  '/Background/White'),
-                    ('/Background/_Violet', '<alt><shift>V',    self.color_change,  7,  '/Background/White'),
-                    ('/Background/_Pink',   '<alt><shift>P',    self.color_change,  8,  '/Background/White'),
+                    ('/_Background',        None,               None,                   0,  '<Branch>'),
+                    ('/Background/_White',  '<alt><shift>W',    self.color_change,      1,  '<RadioItem>'),
+                    ('/Background/Blac_k',  '<alt><shift>K',    self.color_change,      2,  '/Background/White'),
+                    ('/Background/_Green',  '<alt><shift>G',    self.color_change,      3,  '/Background/White'),
+                    ('/Background/_Blue',   '<alt><shift>B',    self.color_change,      4,  '/Background/White'),
+                    ('/Background/_Red',    '<alt><shift>R',    self.color_change,      5,  '/Background/White'),
+                    ('/Background/_Orange', '<alt><shift>O',    self.color_change,      6,  '/Background/White'),
+                    ('/Background/_Violet', '<alt><shift>V',    self.color_change,      7,  '/Background/White'),
+                    ('/Background/_Pink',   '<alt><shift>P',    self.color_change,      8,  '/Background/White'),
 
-                    ('/_Foreground',        None,               None,               0,  '<Branch>'),
-                    ('/Foreground/_Red',    '<ctrl><shift>R',   self.color_change,  5,  '<RadioItem>'),
-                    ('/Foreground/_White',  '<ctrl><shift>W',   self.color_change,  1,  '/Foreground/Red'),
-                    ('/Foreground/Blac_k',  '<ctrl><shift>K',   self.color_change,  2,  '/Foreground/Red'),
-                    ('/Foreground/_Green',  '<ctrl><shift>G',   self.color_change,  3,  '/Foreground/Red'),
-                    ('/Foreground/_Blue',   '<ctrl><shift>B',   self.color_change,  4,  '/Foreground/Red'),
-                    ('/Foreground/_Orange', '<ctrl><shift>O',   self.color_change,  6,  '/Foreground/Red'),
-                    ('/Foreground/_Violet', '<ctrl><shift>V',   self.color_change,  7,  '/Foreground/Red'),
-                    ('/Foreground/_Pink',   '<ctrl><shift>P',   self.color_change,  8,  '/Foreground/Red'),
+                    ('/_Foreground',        None,               None,                   0,  '<Branch>'),
+                    ('/Foreground/_Red',    '<ctrl><shift>R',   self.color_change,      5,  '<RadioItem>'),
+                    ('/Foreground/_White',  '<ctrl><shift>W',   self.color_change,      1,  '/Foreground/Red'),
+                    ('/Foreground/Blac_k',  '<ctrl><shift>K',   self.color_change,      2,  '/Foreground/Red'),
+                    ('/Foreground/_Green',  '<ctrl><shift>G',   self.color_change,      3,  '/Foreground/Red'),
+                    ('/Foreground/_Blue',   '<ctrl><shift>B',   self.color_change,      4,  '/Foreground/Red'),
+                    ('/Foreground/_Orange', '<ctrl><shift>O',   self.color_change,      6,  '/Foreground/Red'),
+                    ('/Foreground/_Violet', '<ctrl><shift>V',   self.color_change,      7,  '/Foreground/Red'),
+                    ('/Foreground/_Pink',   '<ctrl><shift>P',   self.color_change,      8,  '/Foreground/Red'),
+
+                    ('/_Opacity',           None,               None,                   0,  '<Branch>'),
+                    ('/Opacity/_50',        '<ctrl><shift>5',   self.opacity_change,    50, '<RadioItem>'),
+                    ('/Opacity/_10',        '<ctrl><shift>1',   self.opacity_change,    10, '/Opacity/50'),
+                    ('/Opacity/_20',        '<ctrl><shift>2',   self.opacity_change,    20, '/Opacity/50'),
+                    ('/Opacity/_30',        '<ctrl><shift>3',   self.opacity_change,    30, '/Opacity/50'),
+                    ('/Opacity/_40',        '<ctrl><shift>4',   self.opacity_change,    40, '/Opacity/50'),
+                    ('/Opacity/_60',        '<ctrl><shift>6',   self.opacity_change,    60, '/Opacity/50'),
+                    ('/Opacity/_70',        '<ctrl><shift>7',   self.opacity_change,    70, '/Opacity/50'),
+                    ('/Opacity/_80',        '<ctrl><shift>8',   self.opacity_change,    80, '/Opacity/50'),
+                    ('/Opacity/_90',        '<ctrl><shift>9',   self.opacity_change,    90, '/Opacity/50'),
+                    ('/Opacity/_100',       '<ctrl><shift>0',   self.opacity_change,    100,'/Opacity/50'),
         )
 
         menubar = self.get_main_menu()
@@ -134,6 +146,15 @@ class Master:
 
         self.ev.area = slave.ea
         slave.area.emit("expose-event", self.ev)
+
+
+    def opacity_change(self, ret, widget):
+        try:
+            if self.old_opacity != ret:
+                slave.window.set_opacity(ret / 100.0)
+                self.old_opacity = ret
+        except AttributeError:
+            self.old_opacity = ret
 
 
     def get_main_menu(self):
