@@ -12,7 +12,7 @@ import cairo
 import math
 
 
-VERSION = '1.3.1'
+VERSION = '1.3.2'
 
 COLORS = {
                 'black':        (0, 0, 0),
