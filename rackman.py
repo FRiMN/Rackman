@@ -12,7 +12,7 @@ import cairo
 import math
 
 
-VERSION = '1.3.2'
+VERSION = '1.4.0'
 
 COLORS = {
                 'black':        (0, 0, 0),
@@ -200,16 +200,28 @@ class Slave:
 
     def resizing(self, widget, event):
         x, y = widget.get_size()
+        ox, oy = widget.get_position()
 
-        if event.hardware_keycode == 114:   # right
-            x += 1
-        elif event.hardware_keycode == 116: # down
-            y += 1
-        elif event.hardware_keycode == 113: # left
-            x -= 1
-        elif event.hardware_keycode == 111: # up
-            y -= 1
+        if event.state & gtk.gdk.CONTROL_MASK:
+            if event.hardware_keycode == 114:   # right
+                ox += 1
+            elif event.hardware_keycode == 116: # down
+                oy += 1
+            elif event.hardware_keycode == 113: # left
+                ox -= 1
+            elif event.hardware_keycode == 111: # up
+                oy -= 1
+        else:
+            if event.hardware_keycode == 114:   # right
+                x += 1
+            elif event.hardware_keycode == 116: # down
+                y += 1
+            elif event.hardware_keycode == 113: # left
+                x -= 1
+            elif event.hardware_keycode == 111: # up
+                y -= 1
 
+        self.window.move(ox, oy)
         self.window.resize(x, y)
 
         return True
