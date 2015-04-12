@@ -290,6 +290,8 @@ class Slave:
 
 
 if __name__ == "__main__":
+    print "Rackman ver. {}".format(VERSION)
+
     base = Master()
     slave = Slave(base)
 
