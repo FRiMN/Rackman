@@ -142,7 +142,7 @@ class Master:
         elif color_context == 'foreground':
             slave.foreground = COLORS[color_name]
         else:
-            pass
+            raise ValueError( "Unknown color_context: {}".format(color_context) )
 
         self.ev.area = slave.ea
         slave.area.emit("expose-event", self.ev)
