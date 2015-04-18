@@ -10,9 +10,11 @@
 import gtk
 import cairo
 import math
+from os import popen
+from string import Template
 
 
-VERSION = '1.4.0'
+VERSION = '1.5.0'
 
 COLORS = {
                 'black':        (0, 0, 0),
@@ -24,6 +26,12 @@ COLORS = {
                 'violet':       (0.5, 0, 0.5),
                 'pink':         (1, 0.5, 1),
 }
+
+
+
+window = gtk.Window()
+screen = window.get_screen()
+
 
 
 class Master:
@@ -51,7 +59,7 @@ class Master:
 
         self.vw = vw = gtk.Entry()
         vw.set_editable(False)
-        vw.set_width_chars(6)
+        vw.set_width_chars(8)
         vw.show()
         tableH.attach(vw, 0,1, *value_row)
 
@@ -62,7 +70,7 @@ class Master:
 
         self.vh = vh = gtk.Entry()
         vh.set_editable(False)
-        vh.set_width_chars(6)
+        vh.set_width_chars(8)
         vh.show()
         tableH.attach(vh, 1,2, *value_row)
 
@@ -121,6 +129,12 @@ class Master:
                     ('/Opacity/_80',        '<ctrl>8',          self.opacity_change,    80, '/Opacity/50'),
                     ('/Opacity/_90',        '<ctrl>9',          self.opacity_change,    90, '/Opacity/50'),
                     ('/Opacity/10_0',       '<ctrl>0',          self.opacity_change,    100,'/Opacity/50'),
+
+                    ('/_Metric',            None,               None,                   0,  '<Branch>'),
+                    ('/Metric/p_x',         None,               self.metric_change,     1,  '<RadioItem>'),
+                    ('/Metric/_mm',         None,               self.metric_change,     2,  '/Metric/px'),
+                    ('/Metric/_in',         None,               self.metric_change,     3,  '/Metric/px'),
+                    ('/Metric/_pt (Adobe)', None,               self.metric_change,     4,  '/Metric/px'),
         )
 
         menubar = self.get_main_menu()
@@ -167,6 +181,15 @@ class Master:
         return item_factory.get_widget("<main>")
 
 
+    def metric_change(self, ret, widget):
+        metric_name = widget.name.split('/')[-1].lower()
+
+        slave.metric = list(slave.metric)
+        slave.metric[0] = metric_name
+        slave.metric = tuple(slave.metric)
+        slave.window.emit("check-resize")   # обновление показателей
+
+
 
 class Slave:
     def __init__(self, parent):
@@ -179,6 +202,7 @@ class Slave:
         self.window.set_opacity(0.5)
 
         self.parent = parent
+        self.metric = ('px', 1, 0, 2)
 
         self.area = gtk.DrawingArea()
         self.background = COLORS['white']
@@ -228,19 +252,58 @@ class Slave:
 
 
     def resize_window(self, widget):
+        dpm = self.get_monitor()
         w, h = self.window.get_size()
+        metric_name = self.metric[0]
+
+        if metric_name == 'px':
+            metric_mod = 1
+            precision_norm = 0
+            precision_high = 2
+        elif metric_name == 'mm':
+            metric_mod = 1.0 / dpm
+            precision_norm = 2
+            precision_high = 2
+        elif metric_name == 'in':
+            metric_mod = 1.0 / dpm / 25.4
+            precision_norm = 3
+            precision_high = 3
+        elif metric_name == 'pt (adobe)':
+            metric_mod = 1.0 / dpm / 0.352777
+            precision_norm = 1
+            precision_high = 1
+        else:
+            raise ValueError( "Unknown metric: {}".format(metric_name) )
+
+        self.metric = (metric_name, metric_mod, precision_norm, precision_high)
 
         gipo = math.sqrt(h*h + w*w)     # гипотенуза
 
         grad1 = math.degrees( math.asin( h / gipo ) )
         grad2 = 90 - grad1
 
-        self.parent.vw.set_text( '{:d}px'.format(w) )
-        self.parent.vh.set_text( '{:d}px'.format(h) )
-        self.parent.vd.set_text( '{:.2f}px'.format(gipo) )
-        self.parent.va.set_text( '{:.1f}° / {:.1f}°'.format( round(grad1,2), round(grad2,2) ) )
+        T = Template('{:.${precision}f}{:s}')
+        norm = T.substitute(precision=precision_norm)
+        high = T.substitute(precision=precision_high)
+
+        self.parent.vw.set_text( norm.format( round(w       * metric_mod, precision_norm), metric_name.split()[0] ) )
+        self.parent.vh.set_text( norm.format( round(h       * metric_mod, precision_norm), metric_name.split()[0] ) )
+        self.parent.vd.set_text( high.format( round(gipo    * metric_mod, precision_high), metric_name.split()[0] ) )
+        self.parent.va.set_text( '{:.1f}° / {:.1f}°'.format( round(grad1,1), round(grad2,1) ) )
 
         return True
+
+
+    def get_monitor(self):
+        gdk_win = gtk.Widget.get_window(self.window)   # получаем gdk.Window из gtk.Window
+        curmon = screen.get_monitor_at_window(gdk_win)
+
+        _px = screen.get_monitor_geometry(curmon)[2]
+        _mm = screen.get_monitor_width_mm(curmon)
+
+        dpm = float(_px) / float(_mm)
+
+        return dpm
 
 
     def draw_cairo(self, area, event):
@@ -287,6 +350,7 @@ class Slave:
         self.context.stroke()
 
         return False
+
 
 
 if __name__ == "__main__":
