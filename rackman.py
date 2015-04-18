@@ -10,11 +10,10 @@
 import gtk
 import cairo
 import math
-from os import popen
 from string import Template
 
 
-VERSION = '1.5.0'
+VERSION = '1.5.1'
 
 COLORS = {
                 'black':        (0, 0, 0),
