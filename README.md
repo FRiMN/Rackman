@@ -47,6 +47,17 @@ $ chmod u=rwx,g=rx,o=rx rackman.py
 # запуск Rackman
 $ ./rackman.py
 ```
+или
+``` bash
+# скачивание нужной версии
+$ wget https://raw.githubusercontent.com/FRiMN/Rackman/master/dist/Rackman-1.5.2.tar.gz
+# распаковка
+$ tar -xzf Rackman-1.5.2.tar.gz
+# переход в директорию
+$ cd ./Rackman-1.5.2
+# установка приложения
+$ sudo python setup.py install
+```
 
 ## Известные баги и особенности
 - Измеритель -- обычное окно, со всеми вытекающими (например: нельзя померить в местах недоступных для размещения окон)
