@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Rackman
+Comment=A tool measure distances on the screen
+Comment[ru]=Экранная линейка
+Exec=python /usr/local/lib/python2.7/dist-packages/rackman.pyc
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Icon=/usr/share/icons/hicolor/scalable/apps/rackman.svg
+Categories=Development;GTK;
+Keywords=Measure;Gtk;mm;in;px;pt;Design;Screen;Monitor;Tool;

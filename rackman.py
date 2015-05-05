@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# See license in the file LICENSE.
 # This software uses semantic versioning (SemVer v2.0.0).
+# Copyright: (c) 2015 by Nik Volkov.
+# License: MIT, see LICENSE for more details.
 
 
 #import pygtk
@@ -11,9 +12,10 @@ import gtk
 import cairo
 import math
 from string import Template
+import os.path
 
 
-VERSION = '1.5.1'
+VERSION = '1.5.2'
 
 COLORS = {
                 'black':        (0, 0, 0),
@@ -32,6 +34,18 @@ window = gtk.Window()
 screen = window.get_screen()
 
 
+icon_file_name = 'rackman.svg'
+icon_path_curdir = os.path.join('./', icon_file_name)
+icon_path_share = os.path.join('/usr/share/icons/hicolor/scalable/apps/', icon_file_name)
+
+if os.path.isfile( icon_path_curdir ):
+    icon_path = icon_path_curdir
+else:
+    icon_path = icon_path_share
+
+icon = gtk.gdk.pixbuf_new_from_file(icon_path)
+
+
 
 class Master:
     def __init__(self):
@@ -39,6 +53,7 @@ class Master:
         self.window.set_opacity(1)
         self.window.set_resizable(False)
         self.window.set_title("Rackman [Master]")
+        self.window.set_icon(icon)
         self.window.connect("destroy", lambda w: gtk.main_quit())
 
 
@@ -195,6 +210,7 @@ class Slave:
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_decorated(False)
         self.window.set_title("Rackman [Slave]")
+        self.window.set_icon(icon)
         self.window.set_resizable(True)
         self.window.set_keep_above(True)
         #self.window.set_transient_for(parent.window)
