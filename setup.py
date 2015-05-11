@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+from glob import glob
 from rackman import VERSION
 
 setup(name          =   'Rackman',
@@ -17,6 +18,7 @@ setup(name          =   'Rackman',
       data_files    =   [
                             ('/usr/share/icons/hicolor/scalable/apps/', ['rackman.svg']),
                             ('/usr/share/applications', ['rackman.desktop']),
+                            ('/usr/share/locale', glob('./locale/*/LC_MESSAGES/*.mo')),
                         ],
       obsoletes     =   [
                             'Rackman',

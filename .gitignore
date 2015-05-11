@@ -3,3 +3,8 @@
 MANIFEST
 =
 deb_dist/
+build.guide
+*~
+gettext_update.sh
+messages.pot
+*.po
