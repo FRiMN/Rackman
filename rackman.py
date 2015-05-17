@@ -17,50 +17,53 @@ import gettext
 
 
 
-VERSION = '1.6.0'
+VERSION = '1.6.4'
 
 
 
-window = gtk.Window()
-screen = window.get_screen()
+def initial():
+    global window, screen, _, COLORS, icon
+
+    window = gtk.Window()
+    screen = window.get_screen()
 
 
 
-app_name = 'rackman'
+    app_name = 'rackman'
 
-if os.path.isfile( './locale/ru/LC_MESSAGES/{}.mo'.format(app_name) ):
-    trans_path = './locale'
-else:
-    trans_path = '/usr/share/locale'
+    if os.path.isfile( './locale/ru/LC_MESSAGES/{}.mo'.format(app_name) ):
+        trans_path = './locale'
+    else:
+        trans_path = '/usr/share/locale'
 
-t = gettext.translation(app_name, trans_path)
-_ = t.ugettext
-
-
-
-COLORS = {
-                _('Black'):        (0, 0, 0),
-                _('White'):        (1, 1, 1),
-                _('Green'):        (0, 1, 0),
-                _('Blue'):         (0, 0, 1),
-                _('Red'):          (1, 0, 0),
-                _('Orange'):       (1, 0.5, 0),
-                _('Violet'):       (0.5, 0, 0.5),
-                _('Pink'):         (1, 0.5, 1),
-}
+    t = gettext.translation(app_name, trans_path)
+    _ = t.ugettext
 
 
 
-icon_file_name = 'rackman.svg'
-icon_path_curdir = os.path.join('./', icon_file_name)
-icon_path_share = os.path.join('/usr/share/icons/hicolor/scalable/apps/', icon_file_name)
+    COLORS = {
+                    _('Black'):        (0, 0, 0),
+                    _('White'):        (1, 1, 1),
+                    _('Green'):        (0, 1, 0),
+                    _('Blue'):         (0, 0, 1),
+                    _('Red'):          (1, 0, 0),
+                    _('Orange'):       (1, 0.5, 0),
+                    _('Violet'):       (0.5, 0, 0.5),
+                    _('Pink'):         (1, 0.5, 1),
+    }
 
-if os.path.isfile( icon_path_curdir ):
-    icon_path = icon_path_curdir
-else:
-    icon_path = icon_path_share
 
-icon = gtk.gdk.pixbuf_new_from_file(icon_path)
+
+    icon_file_name = 'rackman.svg'
+    icon_path_curdir = os.path.join('./', icon_file_name)
+    icon_path_share = os.path.join('/usr/share/icons/hicolor/scalable/apps/', icon_file_name)
+
+    if os.path.isfile( icon_path_curdir ):
+        icon_path = icon_path_curdir
+    else:
+        icon_path = icon_path_share
+
+    icon = gtk.gdk.pixbuf_new_from_file(icon_path)
 
 
 
@@ -388,6 +391,8 @@ class Slave:
 
 if __name__ == "__main__":
     print "Rackman ver. {}".format(VERSION)
+
+    initial()
 
     base = Master()
     slave = Slave(base)

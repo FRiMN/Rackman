@@ -18,9 +18,14 @@ setup(name          =   'Rackman',
       data_files    =   [
                             ('/usr/share/icons/hicolor/scalable/apps/', ['rackman.svg']),
                             ('/usr/share/applications', ['rackman.desktop']),
-                            ('/usr/share/locale', glob('./locale/*/LC_MESSAGES/*.mo')),
+                            #('/usr/share/locale', glob('./locale/*/LC_MESSAGES/*.mo')),
+                            ('/usr/share/locale/ru/LC_MESSAGES', ['./locale/ru/LC_MESSAGES/rackman.mo']),
+                            ('/usr/share/locale/en/LC_MESSAGES', ['./locale/en/LC_MESSAGES/rackman.mo']),
                         ],
       obsoletes     =   [
                             'Rackman',
+                        ],
+      requires      =   [
+                            'PyGTK (>=2.0)',
                         ],
      )
