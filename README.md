@@ -35,6 +35,7 @@ Rackman позволяет визуально отслеживать центр�
   - используйте нативные методы вашего DE.
 
 ## Установка и запуск
+### Stand-alone версия
 ``` bash
 # скачивание последней версии
 $ wget https://github.com/FRiMN/Rackman/archive/master.zip
@@ -47,7 +48,8 @@ $ chmod u=rwx,g=rx,o=rx rackman.py
 # запуск Rackman
 $ ./rackman.py
 ```
-или
+
+### Установка через Distutils
 ``` bash
 # скачивание нужной версии
 $ wget https://raw.githubusercontent.com/FRiMN/Rackman/master/dist/Rackman-1.5.2.tar.gz
@@ -57,6 +59,13 @@ $ tar -xzf Rackman-1.5.2.tar.gz
 $ cd ./Rackman-1.5.2
 # установка приложения
 $ sudo python setup.py install
+```
+
+### Установка из репозиториев (только для Ubuntu)
+``` bash
+$ sudo add-apt-repository ppa:freezemandix/rackman
+$ sudo apt-get update
+$ sudo apt-get install python-rackman
 ```
 
 ## Известные баги и особенности
