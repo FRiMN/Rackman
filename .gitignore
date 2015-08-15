@@ -8,3 +8,4 @@ build.guide
 gettext_update.sh
 messages.pot
 *.po
+*.komodoproject

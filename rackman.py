@@ -17,7 +17,7 @@ import gettext
 
 
 
-VERSION = '1.6.4'
+VERSION = '1.6.5'
 
 
 
@@ -164,11 +164,14 @@ class Master:
                     ('/{}/_90'.format( _('Opacity') ),                  '<ctrl>9',          self.opacity_change,    90, '/{}/50'.format( _('Opacity') )),
                     ('/{}/10_0'.format( _('Opacity') ),                 '<ctrl>0',          self.opacity_change,    100,'/{}/50'.format( _('Opacity') )),
 
-                    ('/{}'.format(    _('_Metric') ),                   None,               None,                   0,  '<Branch>'),
+                    ('/{}'.format(   _('_Metric') ),                    None,               None,                   0,  '<Branch>'),
                     ('/{}/p_x'.format(_('Metric') ),                    None,               self.metric_change,     1,  '<RadioItem>'),
                     ('/{}/_mm'.format(_('Metric') ),                    None,               self.metric_change,     2,  '/{}/px'.format( _('Metric') )),
                     ('/{}/_in'.format(_('Metric') ),                    None,               self.metric_change,     3,  '/{}/px'.format( _('Metric') )),
                     ('/{}/_pt (Adobe)'.format( _('Metric') ),           None,               self.metric_change,     4,  '/{}/px'.format( _('Metric') )),
+
+                    ('/{}'.format(    _('_Tools') ),                    None,               None,                   0,  '<Branch>'),
+                    ('/{}/{}'.format( _('Tools'), _('Rotate') ),        '<ctrl>R',          self.size_change,       1,  '<Item>'),
         )
 
         menubar = self.get_main_menu()
@@ -222,6 +225,11 @@ class Master:
         slave.metric[0] = metric_name
         slave.metric = tuple(slave.metric)
         slave.window.emit("check-resize")   # обновление показателей
+
+
+    def size_change(self, ret, widget):
+        w, h = slave.window.get_size()
+        slave.window.resize(h, w)
 
 
 
@@ -396,5 +404,6 @@ if __name__ == "__main__":
 
     base = Master()
     slave = Slave(base)
+    slave.window.emit("check-resize")
 
     gtk.main()
