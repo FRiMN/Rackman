@@ -2,7 +2,7 @@
 Name=Rackman
 Comment=A tool measure distances on the screen
 Comment[ru]=Экранная линейка
-Exec=python /usr/local/lib/python2.7/dist-packages/rackman.py
+Exec=python /usr/lib/python2.7/dist-packages/rackman.py
 Terminal=false
 Type=Application
 Encoding=UTF-8
