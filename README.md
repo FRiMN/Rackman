@@ -68,6 +68,9 @@ $ sudo apt-get update
 $ sudo apt-get install python-rackman
 ```
 
+### ebuild для Gentoo
+https://github.com/msva/mva-overlay/blob/master/x11-misc/rackman/rackman-9999.ebuild
+
 ## Известные баги и особенности
 - Измеритель -- обычное окно, со всеми вытекающими (например: нельзя померить в местах недоступных для размещения окон)
 - Быстрое перемещение и изменение размера окна измерения полностью зависит от натроек вашего DE
