@@ -28,7 +28,7 @@ setup(name          =   'Rackman',
                             'PyGTK (>=2.0)',
                         ],
       scripts       =   [
-                            'rackman.py'
+                            'rackman'
                         ],
      )
 
