@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-from glob import glob
+# import os
 from rackman import __version__
 
 setup(name          =   'Rackman',
@@ -18,7 +18,6 @@ setup(name          =   'Rackman',
       data_files    =   [
                             ('/usr/share/icons/hicolor/scalable/apps/', ['rackman.svg']),
                             ('/usr/share/applications', ['rackman.desktop']),
-                            #('/usr/share/locale', glob('./locale/*/LC_MESSAGES/*.mo')),
                             ('/usr/share/locale/ru/LC_MESSAGES', ['./locale/ru/LC_MESSAGES/rackman.mo']),
                             ('/usr/share/locale/en/LC_MESSAGES', ['./locale/en/LC_MESSAGES/rackman.mo']),
                         ],
@@ -28,4 +27,11 @@ setup(name          =   'Rackman',
       requires      =   [
                             'PyGTK (>=2.0)',
                         ],
+      scripts       =   [
+                            'rackman.py'
+                        ],
      )
+
+# bin_path = '/usr/bin/rackman'
+# os.symlink('/usr/lib/python2.7/dist-packages/rackman.py', bin_path)
+# os.chmod(bin_path, stat.S_IEXEC)

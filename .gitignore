@@ -9,3 +9,4 @@ gettext_update.sh
 messages.pot
 *.po
 *.komodoproject
+build/
