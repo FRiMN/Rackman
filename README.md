@@ -65,7 +65,7 @@ $ sudo python setup.py install
 ``` bash
 $ sudo add-apt-repository ppa:freezemandix/rackman
 $ sudo apt-get update
-$ sudo apt-get install python-rackman
+$ sudo apt-get install rackman
 ```
 
 ### ebuild для Gentoo
