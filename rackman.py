@@ -17,7 +17,7 @@ import gettext
 
 
 
-VERSION = '1.6.7'
+VERSION = '1.6.8'
 
 
 
@@ -269,25 +269,29 @@ class Slave:
     def resizing(self, widget, event):
         x, y = widget.get_size()
         ox, oy = widget.get_position()
+        
+        acc = 1
+        if event.state & gtk.gdk.SHIFT_MASK:
+            acc = 50
 
         if event.state & gtk.gdk.CONTROL_MASK:
             if event.hardware_keycode == 114:   # right
-                ox += 1
+                ox += acc
             elif event.hardware_keycode == 116: # down
-                oy += 1
+                oy += acc
             elif event.hardware_keycode == 113: # left
-                ox -= 1
+                ox -= acc
             elif event.hardware_keycode == 111: # up
-                oy -= 1
+                oy -= acc
         else:
             if event.hardware_keycode == 114:   # right
-                x += 1
+                x += acc
             elif event.hardware_keycode == 116: # down
-                y += 1
+                y += acc
             elif event.hardware_keycode == 113: # left
-                x -= 1
+                x -= acc
             elif event.hardware_keycode == 111: # up
-                y -= 1
+                y -= acc
 
         self.window.move(ox, oy)
         self.window.resize(x, y)
