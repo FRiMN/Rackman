@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-# import os
 from rackman import __version__
 
 setup(name          =   'Rackman',
@@ -31,7 +30,3 @@ setup(name          =   'Rackman',
                             'rackman'
                         ],
      )
-
-# bin_path = '/usr/bin/rackman'
-# os.symlink('/usr/lib/python2.7/dist-packages/rackman.py', bin_path)
-# os.chmod(bin_path, stat.S_IEXEC)
