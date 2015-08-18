@@ -2,10 +2,10 @@
 
 from distutils.core import setup
 from glob import glob
-from rackman import VERSION
+from rackman import __version__
 
 setup(name          =   'Rackman',
-      version       =   VERSION,
+      version       =   __version__,
       description   =   'A tool measure distances on the screen',
       keywords      =   'tool, application, gtk, measuring, screen, monitor, mm, in, px, pt',
       author        =   'Nik Volkov',

@@ -17,7 +17,7 @@ import gettext
 
 
 
-VERSION = '1.6.8'
+__version__ = '1.7.0'
 
 
 
@@ -402,7 +402,7 @@ class Slave:
 
 
 if __name__ == "__main__":
-    print "Rackman ver. {}".format(VERSION)
+    print "Rackman ver. {}".format(__version__)
 
     initial()
 
