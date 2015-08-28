@@ -17,7 +17,7 @@ import gettext
 
 
 
-__version__ = '1.8.0'
+__version__ = '1.8.1'
 
 
 
@@ -31,7 +31,7 @@ def initial():
     conf_file_name = "rackman.conf"
     conf_path_curdir = os.path.join('./', conf_file_name)
     conf_path_share = os.path.join('/usr/share/rackman/', conf_file_name)
-    conf_path_home = os.path.join('~/.config/rackman/', conf_file_name)
+    conf_path_home = os.path.join(os.path.expanduser('~'),'.config/rackman/', conf_file_name)
 
     conf_paths = (conf_path_share, conf_path_home, conf_path_curdir)
     for conf_path in conf_paths:
