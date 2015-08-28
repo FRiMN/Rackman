@@ -24,8 +24,22 @@ __version__ = '1.8.0'
 def initial():
     global window, screen, _, COLORS, icon, config
 
+
+
     config = {}
-    execfile("rackman.conf", config)    # чтение предустановок из файла конфигурации
+
+    conf_file_name = "rackman.conf"
+    conf_path_curdir = os.path.join('./', conf_file_name)
+    conf_path_share = os.path.join('/usr/share/rackman/', conf_file_name)
+    conf_path_home = os.path.join('~/.config/rackman/', conf_file_name)
+
+    conf_paths = (conf_path_share, conf_path_home, conf_path_curdir)
+    for conf_path in conf_paths:
+        if os.path.isfile( conf_path ):
+            print "Read config {}".format(conf_path)
+            execfile(conf_path, config)    # чтение предустановок из файла конфигурации
+
+
 
     window = gtk.Window()
     screen = window.get_screen()
