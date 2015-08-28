@@ -59,14 +59,54 @@ def initial():
 
 
     COLORS = {
-                    _('Black'):        (0, 0, 0),
-                    _('White'):        (1, 1, 1),
-                    _('Green'):        (0, 1, 0),
-                    _('Blue'):         (0, 0, 1),
-                    _('Red'):          (1, 0, 0),
-                    _('Orange'):       (1, 0.5, 0),
-                    _('Violet'):       (0.5, 0, 0.5),
-                    _('Pink'):         (1, 0.5, 1),
+                    _('Black'): {
+                                    'rgb': (0, 0, 0),
+                                    'key': 'K',
+                                    'marker': 'Blac_k',
+                                    'eng_name': 'Black',
+                    },
+                    _('White'): {
+                                    'rgb': (1, 1, 1),
+                                    'key': 'W',
+                                    'marker': '_White',
+                                    'eng_name': 'White',
+                    },
+                    _('Green'): {
+                                    'rgb': (0, 1, 0),
+                                    'key': 'G',
+                                    'marker': '_Green',
+                                    'eng_name': 'Green',
+                    },
+                    _('Blue'): {
+                                    'rgb': (0, 0, 1),
+                                    'key': 'B',
+                                    'marker': '_Blue',
+                                    'eng_name': 'Blue',
+                    },
+                    _('Red'): {
+                                    'rgb': (1, 0, 0),
+                                    'key': 'R',
+                                    'marker': '_Red',
+                                    'eng_name': 'Red',
+                    },
+                    _('Orange'): {
+                                    'rgb': (1, 0.5, 0),
+                                    'key': 'O',
+                                    'marker': '_Orange',
+                                    'eng_name': 'Orange',
+                    },
+                    _('Violet'): {
+                                    'rgb': (0.5, 0, 0.5),
+                                    'key': 'V',
+                                    'marker': '_Violet',
+                                    'eng_name': 'Violet',
+                    },
+                    _('Pink'): {
+                                    'rgb': (1, 0.5, 1),
+                                    'key': 'P',
+                                    'marker': '_Pink',
+                                    'eng_name': 'Pink',
+                    },
     }
 
 
@@ -81,6 +121,64 @@ def initial():
         icon_path = icon_path_share
 
     icon = gtk.gdk.pixbuf_new_from_file(icon_path)
+
+
+
+
+
+
+def generate_menu(self):
+    items = []
+
+    # backgrounds
+    items.append( ('/{}'.format( _('_Background') ), None, None, 0, '<Branch>') )
+
+    for i in COLORS:
+        C = COLORS[i]
+        if C['eng_name'] == config['background_color']:
+            items.append( ('/{}/{}'.format( _('Background'), _(C['marker']) ), '<alt><shift>{}'.format(C['key']), self.color_change, 1, '<RadioItem>') )
+    for i in COLORS:
+        C = COLORS[i]
+        if C['eng_name'] is not config['background_color']:
+            items.append( ('/{}/{}'.format( _('Background'), _(C['marker']) ), '<alt><shift>{}'.format(C['key']), self.color_change, 2, '/{}/{}'.format( _('Background'), _(config['background_color']))) )
+
+    # foregrounds
+    items.append( ('/{}'.format( _('_Foreground') ), None, None, 0, '<Branch>') )
+
+    for i in COLORS:
+        C = COLORS[i]
+        if C['eng_name'] == config['foreground_color']:
+            items.append( ('/{}/{}'.format( _('Foreground'), _(C['marker']) ), '<ctrl><shift>{}'.format(C['key']), self.color_change, 1, '<RadioItem>') )
+    for i in COLORS:
+        C = COLORS[i]
+        if C['eng_name'] is not config['foreground_color']:
+            items.append( ('/{}/{}'.format( _('Foreground'), _(C['marker']) ), '<ctrl><shift>{}'.format(C['key']), self.color_change, 2, '/{}/{}'.format( _('Foreground'), _(config['foreground_color']))) )
+
+    items.append( ('/{}'.format(    _('_Opacity') ),                  None,               None,                   0,  '<Branch>') )
+    items.append( ('/{}/_50'.format( _('Opacity') ),                  '<ctrl>5',          self.opacity_change,    50, '<RadioItem>') )
+    items.append( ('/{}/_10'.format( _('Opacity') ),                  '<ctrl>1',          self.opacity_change,    10, '/{}/50'.format( _('Opacity') )) )
+    items.append( ('/{}/_20'.format( _('Opacity') ),                  '<ctrl>2',          self.opacity_change,    20, '/{}/50'.format( _('Opacity') )) )
+    items.append( ('/{}/_30'.format( _('Opacity') ),                  '<ctrl>3',          self.opacity_change,    30, '/{}/50'.format( _('Opacity') )) )
+    items.append( ('/{}/_40'.format( _('Opacity') ),                  '<ctrl>4',          self.opacity_change,    40, '/{}/50'.format( _('Opacity') )) )
+    items.append( ('/{}/_60'.format( _('Opacity') ),                  '<ctrl>6',          self.opacity_change,    60, '/{}/50'.format( _('Opacity') )) )
+    items.append( ('/{}/_70'.format( _('Opacity') ),                  '<ctrl>7',          self.opacity_change,    70, '/{}/50'.format( _('Opacity') )) )
+    items.append( ('/{}/_80'.format( _('Opacity') ),                  '<ctrl>8',          self.opacity_change,    80, '/{}/50'.format( _('Opacity') )) )
+    items.append( ('/{}/_90'.format( _('Opacity') ),                  '<ctrl>9',          self.opacity_change,    90, '/{}/50'.format( _('Opacity') )) )
+    items.append( ('/{}/10_0'.format( _('Opacity') ),                 '<ctrl>0',          self.opacity_change,    100,'/{}/50'.format( _('Opacity') )) )
+
+    items.append( ('/{}'.format(   _('_Metric') ),                    None,               None,                   0,  '<Branch>') )
+    items.append( ('/{}/p_x'.format(_('Metric') ),                    None,               self.metric_change,     1,  '<RadioItem>') )
+    items.append( ('/{}/_mm'.format(_('Metric') ),                    None,               self.metric_change,     2,  '/{}/px'.format( _('Metric') )) )
+    items.append( ('/{}/_in'.format(_('Metric') ),                    None,               self.metric_change,     3,  '/{}/px'.format( _('Metric') )) )
+    items.append( ('/{}/_pt (Adobe)'.format( _('Metric') ),           None,               self.metric_change,     4,  '/{}/px'.format( _('Metric') )) )
+
+    items.append( ('/{}'.format(    _('_Tools') ),                    None,               None,                   0,  '<Branch>') )
+    items.append( ('/{}/{}'.format( _('Tools'), _('Rotate') ),        '<ctrl>R',          self.size_change,       1,  '<Item>') )
+
+    return items
+
+
+
 
 
 
@@ -149,48 +247,7 @@ class Master:
         tableH.attach(va, 3,4, *value_row)
 
 
-        self.menu_items = (
-                    ('/{}'.format(    _('_Background') ),               None,               None,                   0,  '<Branch>'),
-                    ('/{}/{}'.format( _('Background'), _('_White') ),   '<alt><shift>W',    self.color_change,      1,  '<RadioItem>'),
-                    ('/{}/{}'.format( _('Background'), _('Blac_k') ),   '<alt><shift>K',    self.color_change,      2,  '/{}/{}'.format( _('Background'), _('White') )),
-                    ('/{}/{}'.format( _('Background'), _('_Green') ),   '<alt><shift>G',    self.color_change,      3,  '/{}/{}'.format( _('Background'), _('White') )),
-                    ('/{}/{}'.format( _('Background'), _('_Blue') ),    '<alt><shift>B',    self.color_change,      4,  '/{}/{}'.format( _('Background'), _('White') )),
-                    ('/{}/{}'.format( _('Background'), _('_Red') ),     '<alt><shift>R',    self.color_change,      5,  '/{}/{}'.format( _('Background'), _('White') )),
-                    ('/{}/{}'.format( _('Background'), _('_Orange') ),  '<alt><shift>O',    self.color_change,      6,  '/{}/{}'.format( _('Background'), _('White') )),
-                    ('/{}/{}'.format( _('Background'), _('_Violet') ),  '<alt><shift>V',    self.color_change,      7,  '/{}/{}'.format( _('Background'), _('White') )),
-                    ('/{}/{}'.format( _('Background'), _('_Pink') ),    '<alt><shift>P',    self.color_change,      8,  '/{}/{}'.format( _('Background'), _('White') )),
-
-                    ('/{}'.format(    _('_Foreground') ),               None,               None,                   0,  '<Branch>'),
-                    ('/{}/{}'.format( _('Foreground'), _('_Red') ),     '<ctrl><shift>R',   self.color_change,      5,  '<RadioItem>'),
-                    ('/{}/{}'.format( _('Foreground'), _('_White') ),   '<ctrl><shift>W',   self.color_change,      1,  '/{}/{}'.format( _('Foreground'), _('Red') )),
-                    ('/{}/{}'.format( _('Foreground'), _('Blac_k') ),   '<ctrl><shift>K',   self.color_change,      2,  '/{}/{}'.format( _('Foreground'), _('Red') )),
-                    ('/{}/{}'.format( _('Foreground'), _('_Green') ),   '<ctrl><shift>G',   self.color_change,      3,  '/{}/{}'.format( _('Foreground'), _('Red') )),
-                    ('/{}/{}'.format( _('Foreground'), _('_Blue') ),    '<ctrl><shift>B',   self.color_change,      4,  '/{}/{}'.format( _('Foreground'), _('Red') )),
-                    ('/{}/{}'.format( _('Foreground'), _('_Orange') ),  '<ctrl><shift>O',   self.color_change,      6,  '/{}/{}'.format( _('Foreground'), _('Red') )),
-                    ('/{}/{}'.format( _('Foreground'), _('_Violet') ),  '<ctrl><shift>V',   self.color_change,      7,  '/{}/{}'.format( _('Foreground'), _('Red') )),
-                    ('/{}/{}'.format( _('Foreground'), _('_Pink') ),    '<ctrl><shift>P',   self.color_change,      8,  '/{}/{}'.format( _('Foreground'), _('Red') )),
-
-                    ('/{}'.format(    _('_Opacity') ),                  None,               None,                   0,  '<Branch>'),
-                    ('/{}/_50'.format( _('Opacity') ),                  '<ctrl>5',          self.opacity_change,    50, '<RadioItem>'),
-                    ('/{}/_10'.format( _('Opacity') ),                  '<ctrl>1',          self.opacity_change,    10, '/{}/50'.format( _('Opacity') )),
-                    ('/{}/_20'.format( _('Opacity') ),                  '<ctrl>2',          self.opacity_change,    20, '/{}/50'.format( _('Opacity') )),
-                    ('/{}/_30'.format( _('Opacity') ),                  '<ctrl>3',          self.opacity_change,    30, '/{}/50'.format( _('Opacity') )),
-                    ('/{}/_40'.format( _('Opacity') ),                  '<ctrl>4',          self.opacity_change,    40, '/{}/50'.format( _('Opacity') )),
-                    ('/{}/_60'.format( _('Opacity') ),                  '<ctrl>6',          self.opacity_change,    60, '/{}/50'.format( _('Opacity') )),
-                    ('/{}/_70'.format( _('Opacity') ),                  '<ctrl>7',          self.opacity_change,    70, '/{}/50'.format( _('Opacity') )),
-                    ('/{}/_80'.format( _('Opacity') ),                  '<ctrl>8',          self.opacity_change,    80, '/{}/50'.format( _('Opacity') )),
-                    ('/{}/_90'.format( _('Opacity') ),                  '<ctrl>9',          self.opacity_change,    90, '/{}/50'.format( _('Opacity') )),
-                    ('/{}/10_0'.format( _('Opacity') ),                 '<ctrl>0',          self.opacity_change,    100,'/{}/50'.format( _('Opacity') )),
-
-                    ('/{}'.format(   _('_Metric') ),                    None,               None,                   0,  '<Branch>'),
-                    ('/{}/p_x'.format(_('Metric') ),                    None,               self.metric_change,     1,  '<RadioItem>'),
-                    ('/{}/_mm'.format(_('Metric') ),                    None,               self.metric_change,     2,  '/{}/px'.format( _('Metric') )),
-                    ('/{}/_in'.format(_('Metric') ),                    None,               self.metric_change,     3,  '/{}/px'.format( _('Metric') )),
-                    ('/{}/_pt (Adobe)'.format( _('Metric') ),           None,               self.metric_change,     4,  '/{}/px'.format( _('Metric') )),
-
-                    ('/{}'.format(    _('_Tools') ),                    None,               None,                   0,  '<Branch>'),
-                    ('/{}/{}'.format( _('Tools'), _('Rotate') ),        '<ctrl>R',          self.size_change,       1,  '<Item>'),
-        )
+        self.menu_items = ( generate_menu(self) )
 
         menubar = self.get_main_menu()
         tableH.attach(menubar, 0,4, *menu_row)
@@ -207,9 +264,9 @@ class Master:
         color_context = widget.name.split('/')[-2]
 
         if color_context == _('Background'):
-            slave.background = COLORS[ _(color_name) ]
+            slave.background = COLORS[ _(color_name) ]['rgb']
         elif color_context == _('Foreground'):
-            slave.foreground = COLORS[ _(color_name) ]
+            slave.foreground = COLORS[ _(color_name) ]['rgb']
         else:
             raise ValueError( "Unknown color_context: {}".format(color_context) )
 
@@ -270,8 +327,8 @@ class Slave:
 
         self.area = gtk.DrawingArea()
 
-        self.background = COLORS[ _( config['background_color'] ) ]
-        self.foreground = COLORS[ _( config['foreground_color'] ) ]
+        self.background = COLORS[ _( config['background_color'] ) ]['rgb']
+        self.foreground = COLORS[ _( config['foreground_color'] ) ]['rgb']
 
         self.window.add(self.area)
 
