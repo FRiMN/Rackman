@@ -320,7 +320,7 @@ class Slave:
             self.window.set_transient_for(parent.window)
         else:
             self.window.set_transient_for(None)
-        self.window.set_opacity(0.5)
+        self.window.set_opacity( config['slave_opacity'] )
 
         self.parent = parent
         self.metric = ('px', 1, 0, 2)
