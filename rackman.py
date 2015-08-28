@@ -154,17 +154,19 @@ def generate_menu(self):
         if C['eng_name'] is not config['foreground_color']:
             items.append( ('/{}/{}'.format( _('Foreground'), _(C['marker']) ), '<ctrl><shift>{}'.format(C['key']), self.color_change, 2, '/{}/{}'.format( _('Foreground'), _(config['foreground_color']))) )
 
-    items.append( ('/{}'.format(    _('_Opacity') ),                  None,               None,                   0,  '<Branch>') )
-    items.append( ('/{}/_50'.format( _('Opacity') ),                  '<ctrl>5',          self.opacity_change,    50, '<RadioItem>') )
-    items.append( ('/{}/_10'.format( _('Opacity') ),                  '<ctrl>1',          self.opacity_change,    10, '/{}/50'.format( _('Opacity') )) )
-    items.append( ('/{}/_20'.format( _('Opacity') ),                  '<ctrl>2',          self.opacity_change,    20, '/{}/50'.format( _('Opacity') )) )
-    items.append( ('/{}/_30'.format( _('Opacity') ),                  '<ctrl>3',          self.opacity_change,    30, '/{}/50'.format( _('Opacity') )) )
-    items.append( ('/{}/_40'.format( _('Opacity') ),                  '<ctrl>4',          self.opacity_change,    40, '/{}/50'.format( _('Opacity') )) )
-    items.append( ('/{}/_60'.format( _('Opacity') ),                  '<ctrl>6',          self.opacity_change,    60, '/{}/50'.format( _('Opacity') )) )
-    items.append( ('/{}/_70'.format( _('Opacity') ),                  '<ctrl>7',          self.opacity_change,    70, '/{}/50'.format( _('Opacity') )) )
-    items.append( ('/{}/_80'.format( _('Opacity') ),                  '<ctrl>8',          self.opacity_change,    80, '/{}/50'.format( _('Opacity') )) )
-    items.append( ('/{}/_90'.format( _('Opacity') ),                  '<ctrl>9',          self.opacity_change,    90, '/{}/50'.format( _('Opacity') )) )
-    items.append( ('/{}/10_0'.format( _('Opacity') ),                 '<ctrl>0',          self.opacity_change,    100,'/{}/50'.format( _('Opacity') )) )
+    # opacity
+    items.append( ('/{}'.format(    _('_Opacity') ), None, None, 0, '<Branch>') )
+    
+    opacitys = range(10, 101, 10)
+    for i in opacitys:
+        if i == config['slave_opacity'] * 100:
+            items.append( ('/{}/_{}'.format( _('Opacity'), i ), '<ctrl>{}'.format(str(i)[-2]), self.opacity_change, i, '<RadioItem>') )
+    for i in opacitys:
+        if i != config['slave_opacity'] * 100:
+            if i == 100:
+                items.append( ('/{}/10_0'.format( _('Opacity') ), '<ctrl>{}'.format(str(i)[-2]), self.opacity_change, i, '/{}/{}'.format( _('Opacity'), int(config['slave_opacity'] * 100) )) )
+            else:
+                items.append( ('/{}/_{}'.format( _('Opacity'), i ), '<ctrl>{}'.format(str(i)[-2]), self.opacity_change, i, '/{}/{}'.format( _('Opacity'), int(config['slave_opacity'] * 100) )) )
 
     items.append( ('/{}'.format(   _('_Metric') ),                    None,               None,                   0,  '<Branch>') )
     items.append( ('/{}/p_x'.format(_('Metric') ),                    None,               self.metric_change,     1,  '<RadioItem>') )
