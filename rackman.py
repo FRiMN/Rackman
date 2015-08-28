@@ -7,7 +7,7 @@
 
 
 #import pygtk
-#pygtk.require('2.0')
+#pygtk.require('2.4')
 import gtk
 import cairo
 import math
@@ -17,12 +17,15 @@ import gettext
 
 
 
-__version__ = '1.7.0'
+__version__ = '1.8.0'
 
 
 
 def initial():
-    global window, screen, _, COLORS, icon
+    global window, screen, _, COLORS, icon, config
+
+    config = {}
+    execfile("rackman.conf", config)    # чтение предустановок из файла конфигурации
 
     window = gtk.Window()
     screen = window.get_screen()
@@ -72,8 +75,9 @@ class Master:
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_opacity(1)
         self.window.set_resizable(False)
-        self.window.set_title("Rackman [Master]")
+        self.window.set_title( config['master_title'] )
         self.window.set_icon(icon)
+        self.window.set_keep_above(config['master_above'])
         self.window.connect("destroy", lambda w: gtk.main_quit())
 
 
@@ -237,11 +241,14 @@ class Slave:
     def __init__(self, parent):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_decorated(False)
-        self.window.set_title("Rackman [Slave]")
+        self.window.set_title( config['slave_title'] )
         self.window.set_icon(icon)
         self.window.set_resizable(True)
-        self.window.set_keep_above(True)
-        #self.window.set_transient_for(parent.window)
+        self.window.set_keep_above(config['slave_above'])
+        if config['transient'] == True:
+            self.window.set_transient_for(parent.window)
+        else:
+            self.window.set_transient_for(None)
         self.window.set_opacity(0.5)
 
         self.parent = parent
@@ -249,8 +256,8 @@ class Slave:
 
         self.area = gtk.DrawingArea()
 
-        self.background = COLORS[ _('White') ]
-        self.foreground = COLORS[ _('Red') ]
+        self.background = COLORS[ _( config['background_color'] ) ]
+        self.foreground = COLORS[ _( config['foreground_color'] ) ]
 
         self.window.add(self.area)
 
@@ -269,10 +276,10 @@ class Slave:
     def resizing(self, widget, event):
         x, y = widget.get_size()
         ox, oy = widget.get_position()
-        
+
         acc = 1
         if event.state & gtk.gdk.SHIFT_MASK:
-            acc = 50
+            acc = config['fast_mode_speed']
 
         if event.state & gtk.gdk.CONTROL_MASK:
             if event.hardware_keycode == 114:   # right
