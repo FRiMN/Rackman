@@ -17,6 +17,7 @@ setup(name          =   'Rackman',
       data_files    =   [
                             ('/usr/share/icons/hicolor/scalable/apps/', ['rackman.svg']),
                             ('/usr/share/applications', ['rackman.desktop']),
+                            ('/usr/share/rackman', ['rackman.conf']),
                             ('/usr/share/locale/ru/LC_MESSAGES', ['./locale/ru/LC_MESSAGES/rackman.mo']),
                             ('/usr/share/locale/en/LC_MESSAGES', ['./locale/en/LC_MESSAGES/rackman.mo']),
                         ],
@@ -24,7 +25,7 @@ setup(name          =   'Rackman',
                             'Rackman',
                         ],
       requires      =   [
-                            'PyGTK (>=2.0)',
+                            'PyGTK (>=2.4)',
                         ],
       scripts       =   [
                             'rackman'
