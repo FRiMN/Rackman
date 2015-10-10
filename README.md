@@ -6,6 +6,8 @@
 
 Написана на Python и GTK.
 
+![Главное окно](https://leto13f.storage.yandex.net/rdisk/83da2574401a797cf1e9fc55a4f6b157efea66d656a67be37ff4bdd29933046f/inf/nCP3UpOegGpBSReEjv4i7VzLOqy08WIEkBBDGuVYljZk6YkOrnd-QXg3YkeK7wS23szsVPkUIpyKN_V2YqrWhA==?uid=84330535&filename=master_1.9.0.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&tknv=v2&rtoken=5ab844437887d2e4a2555aab636f2d71&force_default=yes&ycrid=na-12b166efaf52cf94cf0fc3e3c8d4d1e2-downloader10g)
+
 ## Размеры
 Rackman позволяет измерять высоту и ширину объектов на экране.
 
@@ -51,18 +53,6 @@ $ chmod u=rwx,g=rx,o=rx rackman.py
 $ ./rackman.py
 ```
 
-### Установка через Distutils
-``` bash
-# скачивание нужной версии
-$ wget https://raw.githubusercontent.com/FRiMN/Rackman/master/dist/Rackman-1.5.2.tar.gz
-# распаковка
-$ tar -xzf Rackman-1.5.2.tar.gz
-# переход в директорию
-$ cd ./Rackman-1.5.2
-# установка приложения
-$ sudo python setup.py install
-```
-
 ### Установка из репозиториев (только для Ubuntu)
 ``` bash
 $ sudo add-apt-repository ppa:freezemandix/rackman
@@ -78,6 +68,5 @@ https://github.com/msva/mva-overlay/blob/master/x11-misc/rackman/rackman-9999.eb
 - Быстрое перемещение и изменение размера окна измерения полностью зависит от натроек вашего DE
 - Если в вашем DE есть умное поведение окон (прилипание и т.п.), то оно будет применяться и к измерителю, что не всегда удобно
 - Изменение цвета и прозрачности с клавиатуры работает только для Master-окна (окно должно быть в фокусе)
-- Нет никакого сохранения настроек
 - Центральные прерывистые линии могут быть несколько размазаны при чётных высоте или ширине окна. Это особенности рендринга gtk и cairo линий располагающихся "между пикселей"
 - Размеры по вертикали для производных единиц (все кроме px) могут быть несколько меньше реальных (~0.5mm)
