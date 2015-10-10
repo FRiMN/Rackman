@@ -17,21 +17,21 @@ import gettext
 
 
 
-__version__ = '1.8.2'
+__version__ = '1.9.0'
 
 
 
 def initial():
-    global window, screen, _, COLORS, icon, config
+    global window, screen, _, COLORS, icon, config, tv_ratios
 
 
 
-    config = {}
+    config = {}  # lint:ok
 
     conf_file_name = "rackman.conf"
     conf_path_curdir = os.path.join('./', conf_file_name)
     conf_path_share = os.path.join('/usr/share/rackman/', conf_file_name)
-    conf_path_home = os.path.join(os.path.expanduser('~'),'.config/rackman/', conf_file_name)
+    conf_path_home = os.path.join(os.path.expanduser('~'), '.config/rackman/', conf_file_name)
 
     conf_paths = (conf_path_share, conf_path_home, conf_path_curdir)
     for conf_path in conf_paths:
@@ -108,6 +108,16 @@ def initial():
                                     'eng_name': 'Pink',
                     },
     }
+    
+    
+    tv_ratios = {
+                    '1.25': '5:4',
+                    '1.33': '4:3',
+                    '1.50': '3:2',
+                    '1.56': '14:9',
+                    '1.60': '16:10',
+                    '1.78': '16:9',
+    }
 
 
 
@@ -156,7 +166,7 @@ def generate_menu(self):
 
     # opacity
     items.append( ('/{}'.format(    _('_Opacity') ), None, None, 0, '<Branch>') )
-    
+
     opacitys = range(10, 101, 10)
     for i in opacitys:
         if i == config['slave_opacity'] * 100:
@@ -176,6 +186,7 @@ def generate_menu(self):
 
     items.append( ('/{}'.format(    _('_Tools') ),                    None,               None,                   0,  '<Branch>') )
     items.append( ('/{}/{}'.format( _('Tools'), _('Rotate') ),        '<ctrl>R',          self.size_change,       1,  '<Item>') )
+    items.append( ('/{}/{}'.format( _('Tools'), _('Fix 100%') ),      '<ctrl>F',          self.fix_percent,       2,  '<Item>') )
 
     return items
 
@@ -195,7 +206,7 @@ class Master:
         self.window.connect("destroy", lambda w: gtk.main_quit())
 
 
-        tableH = gtk.Table(rows=3, columns=4, homogeneous=False)
+        tableH = gtk.Table(rows=5, columns=4, homogeneous=False)
         self.window.add(tableH)
         tableH.set_col_spacings(2)
         tableH.show()
@@ -203,6 +214,8 @@ class Master:
         menu_row = 0,1
         label_row = 1,2
         value_row = 2,3
+        sub_label_row = 3,4
+        sub_value_row = 4,5
 
 
         self.lw = lw = gtk.Label( _('Width') )
@@ -247,6 +260,28 @@ class Master:
         va.set_width_chars(11)
         va.show()
         tableH.attach(va, 3,4, *value_row)
+        
+        
+        self.lpr = lpr = gtk.Label( _('Percents (W x H / D)') )
+        lpr.show()
+        tableH.attach(lpr, 0,3, *sub_label_row)
+
+        self.vpr = vpr = gtk.Entry()
+        vpr.set_editable(False)
+        vpr.set_width_chars(25)
+        vpr.show()
+        tableH.attach(vpr, 0,3, *sub_value_row)
+        
+        
+        self.lar = lar = gtk.Label( _('Aspect ratio') )
+        lar.show()
+        tableH.attach(lar, 3,4, *sub_label_row)
+
+        self.var = var = gtk.Entry()
+        var.set_editable(False)
+        var.set_width_chars(8)
+        var.show()
+        tableH.attach(var, 3,4, *sub_value_row)
 
 
         self.menu_items = ( generate_menu(self) )
@@ -307,6 +342,12 @@ class Master:
     def size_change(self, ret, widget):
         w, h = slave.window.get_size()
         slave.window.resize(h, w)
+        
+    
+    def fix_percent(self, ret, widget):
+        w, h = slave.window.get_size()
+        slave.percent_full = (w, h)
+        slave.window.emit("check-resize")   # обновление показателей
 
 
 
@@ -326,6 +367,9 @@ class Slave:
 
         self.parent = parent
         self.metric = ('px', 1, 0, 2)
+        
+        w, h = self.window.get_size()
+        self.percent_full = (w, h)
 
         self.area = gtk.DrawingArea()
 
@@ -409,6 +453,21 @@ class Slave:
 
         grad1 = math.degrees( math.asin( h / gipo ) )
         grad2 = 90 - grad1
+        
+        percent_w = ( w * 100.0 / self.percent_full[0] )
+        percent_h = ( h * 100.0 / self.percent_full[1] )
+        percent_d = ( gipo * 100.0 / ( math.sqrt(self.percent_full[0]*self.percent_full[0] + self.percent_full[1]*self.percent_full[1]) ) )
+        
+        if w >= h:
+            ratio = float(w) / h
+        else:
+            ratio = float(h) / w
+        
+        r = str( round(ratio, 3) )
+        if r in tv_ratios.keys():
+            ratio_tv = '({})'.format( tv_ratios[r] )
+        else:
+            ratio_tv = ''
 
         T = Template('{:.${precision}f}{:s}')
         norm = T.substitute(precision=precision_norm)
@@ -418,6 +477,9 @@ class Slave:
         self.parent.vh.set_text( norm.format( round(h       * metric_mod, precision_norm), metric_name.split()[0] ) )
         self.parent.vd.set_text( high.format( round(gipo    * metric_mod, precision_high), metric_name.split()[0] ) )
         self.parent.va.set_text( '{:.1f}° / {:.1f}°'.format( round(grad1,1), round(grad2,1) ) )
+        
+        self.parent.vpr.set_text( '{:.2f}% x {:.2f}% / {:.2f}%'.format( percent_w, percent_h, percent_d ) )
+        self.parent.var.set_text( '{:.3f}:1 {:s}'.format( ratio, ratio_tv ) )
 
         return True
 
