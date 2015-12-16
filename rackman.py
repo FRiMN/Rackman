@@ -108,8 +108,8 @@ def initial():
                                     'eng_name': 'Pink',
                     },
     }
-    
-    
+
+
     tv_ratios = {
                     '1.25': '5:4',
                     '1.33': '4:3',
@@ -260,8 +260,8 @@ class Master:
         va.set_width_chars(11)
         va.show()
         tableH.attach(va, 3,4, *value_row)
-        
-        
+
+
         self.lpr = lpr = gtk.Label( _('Percents (W x H / D)') )
         lpr.show()
         tableH.attach(lpr, 0,3, *sub_label_row)
@@ -271,8 +271,8 @@ class Master:
         vpr.set_width_chars(25)
         vpr.show()
         tableH.attach(vpr, 0,3, *sub_value_row)
-        
-        
+
+
         self.lar = lar = gtk.Label( _('Aspect ratio') )
         lar.show()
         tableH.attach(lar, 3,4, *sub_label_row)
@@ -342,8 +342,8 @@ class Master:
     def size_change(self, ret, widget):
         w, h = slave.window.get_size()
         slave.window.resize(h, w)
-        
-    
+
+
     def fix_percent(self, ret, widget):
         w, h = slave.window.get_size()
         slave.percent_full = (w, h)
@@ -367,7 +367,7 @@ class Slave:
 
         self.parent = parent
         self.metric = ('px', 1, 0, 2)
-        
+
         w, h = self.window.get_size()
         self.percent_full = (w, h)
 
@@ -453,16 +453,16 @@ class Slave:
 
         grad1 = math.degrees( math.asin( h / gipo ) )
         grad2 = 90 - grad1
-        
+
         percent_w = ( w * 100.0 / self.percent_full[0] )
         percent_h = ( h * 100.0 / self.percent_full[1] )
         percent_d = ( gipo * 100.0 / ( math.sqrt(self.percent_full[0]*self.percent_full[0] + self.percent_full[1]*self.percent_full[1]) ) )
-        
+
         if w >= h:
             ratio = float(w) / h
         else:
             ratio = float(h) / w
-        
+
         r = str( round(ratio, 3) )
         if r in tv_ratios.keys():
             ratio_tv = '({})'.format( tv_ratios[r] )
@@ -477,7 +477,7 @@ class Slave:
         self.parent.vh.set_text( norm.format( round(h       * metric_mod, precision_norm), metric_name.split()[0] ) )
         self.parent.vd.set_text( high.format( round(gipo    * metric_mod, precision_high), metric_name.split()[0] ) )
         self.parent.va.set_text( '{:.1f}° / {:.1f}°'.format( round(grad1,1), round(grad2,1) ) )
-        
+
         self.parent.vpr.set_text( '{:.2f}% x {:.2f}% / {:.2f}%'.format( percent_w, percent_h, percent_d ) )
         self.parent.var.set_text( '{:.3f}:1 {:s}'.format( ratio, ratio_tv ) )
 

@@ -10,3 +10,6 @@ messages.pot
 *.po
 *.komodoproject
 build/
+.idea/
+*.sublime-workspace
+*.sublime-project
