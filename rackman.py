@@ -17,7 +17,7 @@ import gettext
 
 
 
-__version__ = '1.9.0'
+__version__ = '1.10.0'
 
 
 
@@ -26,7 +26,7 @@ def initial():
 
 
 
-    config = {}  # lint:ok
+    config = {}
 
     conf_file_name = "rackman.conf"
     conf_path_curdir = os.path.join('./', conf_file_name)
@@ -399,22 +399,37 @@ class Slave:
             acc = config['fast_mode_speed']
 
         if event.state & gtk.gdk.CONTROL_MASK:
-            if event.hardware_keycode == 114:   # right
+            if event.hardware_keycode == 114:    # right
                 ox += acc
-            elif event.hardware_keycode == 116: # down
+            elif event.hardware_keycode == 116:  # down
                 oy += acc
-            elif event.hardware_keycode == 113: # left
+            elif event.hardware_keycode == 113:  # left
                 ox -= acc
-            elif event.hardware_keycode == 111: # up
+            elif event.hardware_keycode == 111:  # up
                 oy -= acc
+        elif event.state & gtk.gdk.MOD1_MASK:   # ~ alt
+            if event.hardware_keycode == 114:    # right
+                ox -= acc
+                x += acc*2
+            elif event.hardware_keycode == 116:  # down
+                oy -= acc
+                y += acc*2
+            elif event.hardware_keycode == 113:  # left
+                if x > acc*2:
+                    ox += acc
+                    x -= acc*2
+            elif event.hardware_keycode == 111:  # up
+                if y > acc*2:
+                    oy += acc
+                    y -= acc*2
         else:
-            if event.hardware_keycode == 114:   # right
+            if event.hardware_keycode == 114:    # right
                 x += acc
-            elif event.hardware_keycode == 116: # down
+            elif event.hardware_keycode == 116:  # down
                 y += acc
-            elif event.hardware_keycode == 113: # left
+            elif event.hardware_keycode == 113:  # left
                 x -= acc
-            elif event.hardware_keycode == 111: # up
+            elif event.hardware_keycode == 111:  # up
                 y -= acc
 
         self.window.move(ox, oy)
