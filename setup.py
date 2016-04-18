@@ -20,12 +20,14 @@ setup(name          =   'Rackman',
                             ('/usr/share/rackman', ['rackman.conf']),
                             ('/usr/share/locale/ru/LC_MESSAGES', ['./locale/ru/LC_MESSAGES/rackman.mo']),
                             ('/usr/share/locale/en/LC_MESSAGES', ['./locale/en/LC_MESSAGES/rackman.mo']),
+                            ('/usr/share/doc/rackman/html/ru', ['./doc/html/ru/index.html']),
+                            ('/usr/share/man/ru/man1', ['./doc/man/ru/rackman.1.gz']),
                         ],
       obsoletes     =   [
                             'Rackman',
                         ],
       requires      =   [
-                            'PyGTK (>=2.4)',
+                            'PyGTK (>=2.0)',
                         ],
       scripts       =   [
                             'rackman'

@@ -1,12 +1,10 @@
 # Rackman
 Утилита, позволяющая измерять растояния в пикселях, миллиметрах, дюймах и пунктах Adobe на экране вашего монитора. 
 Представляет собой два окна:
-  1. **главное** (*Master*), содержащее численную информацию и меню;
-  2. **дочернее** (*Slave*), представляющее собой некий измерительный инструмент.
+1. **главное** (*Master*), содержащее численную информацию и меню;
+2. **дочернее** (*Slave*), представляющее собой некий измерительный инструмент.
 
 Написана на Python и GTK.
-
-![Главное окно](https://leto13f.storage.yandex.net/rdisk/83da2574401a797cf1e9fc55a4f6b157efea66d656a67be37ff4bdd29933046f/inf/nCP3UpOegGpBSReEjv4i7VzLOqy08WIEkBBDGuVYljZk6YkOrnd-QXg3YkeK7wS23szsVPkUIpyKN_V2YqrWhA==?uid=84330535&filename=master_1.9.0.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&tknv=v2&rtoken=5ab844437887d2e4a2555aab636f2d71&force_default=yes&ycrid=na-12b166efaf52cf94cf0fc3e3c8d4d1e2-downloader10g)
 
 ## Размеры
 Rackman позволяет измерять высоту и ширину объектов на экране.
@@ -70,3 +68,11 @@ https://github.com/msva/mva-overlay/blob/master/x11-misc/rackman/rackman-9999.eb
 - Изменение цвета и прозрачности с клавиатуры работает только для Master-окна (окно должно быть в фокусе)
 - Центральные прерывистые линии могут быть несколько размазаны при чётных высоте или ширине окна. Это особенности рендринга gtk и cairo линий располагающихся "между пикселей"
 - Размеры по вертикали для производных единиц (все кроме px) могут быть несколько меньше реальных (~0.5mm)
+
+## License
+MIT License
+
+## Authors
+(C) 2015-2016 Николай Волков <freezemandix@ya.ru>
+
+<https://github.com/FRiMN/Rackman>

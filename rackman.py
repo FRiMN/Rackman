@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 # This software uses semantic versioning (SemVer v2.0.0).
-# Copyright: (c) 2015 by Nik Volkov.
+# Copyright: (c) 2015-2016 by Nik Volkov.
 # License: MIT, see LICENSE for more details.
 
 
-#import pygtk
-#pygtk.require('2.4')
+import pygtk
+pygtk.require('2.0')
 import gtk
 import cairo
 import math
@@ -17,7 +17,7 @@ import gettext
 
 
 
-__version__ = '1.10.0'
+__version__ = '1.11.1'
 
 
 
@@ -187,6 +187,7 @@ def generate_menu(self):
     items.append( ('/{}'.format(    _('_Tools') ),                    None,               None,                   0,  '<Branch>') )
     items.append( ('/{}/{}'.format( _('Tools'), _('Rotate') ),        '<ctrl>R',          self.size_change,       1,  '<Item>') )
     items.append( ('/{}/{}'.format( _('Tools'), _('Fix 100%') ),      '<ctrl>F',          self.fix_percent,       2,  '<Item>') )
+    items.append( ('/{}/{}'.format( _('Tools'), _('Help') ),          '<ctrl>H',          self.open_help,         3,  '<Item>') )
 
     return items
 
@@ -294,6 +295,20 @@ class Master:
 
 
         self.window.show()
+
+
+    def open_help(self, ret, widget):
+        import webbrowser
+        urls = (
+            os.path.realpath('./doc/html/ru/index.html'),
+            '/usr/share/doc/rackman/html/ru/index.html',
+        )
+        for url in urls:
+            print 'Try open {}'.format(url)
+            if os.path.isfile(url):
+                print '\t ...open in webbrowser'
+                webbrowser.open(url)
+                break
 
 
     def color_change(self, ret, widget):
