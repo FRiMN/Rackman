@@ -135,6 +135,15 @@ def initial():
 
 
 
+class Key:
+    up = 111
+    down = 116
+    left = 113
+    right = 114
+
+
+
+
 
 
 def generate_menu(self):
@@ -414,37 +423,37 @@ class Slave:
             acc = config['fast_mode_speed']
 
         if event.state & gtk.gdk.CONTROL_MASK:
-            if event.hardware_keycode == 114:    # right
+            if event.hardware_keycode == Key.right:
                 ox += acc
-            elif event.hardware_keycode == 116:  # down
+            elif event.hardware_keycode == Key.down:
                 oy += acc
-            elif event.hardware_keycode == 113:  # left
+            elif event.hardware_keycode == Key.left:
                 ox -= acc
-            elif event.hardware_keycode == 111:  # up
+            elif event.hardware_keycode == Key.up:
                 oy -= acc
         elif event.state & gtk.gdk.MOD1_MASK:   # ~ alt
-            if event.hardware_keycode == 114:    # right
+            if event.hardware_keycode == Key.right:
                 ox -= acc
                 x += acc*2
-            elif event.hardware_keycode == 116:  # down
+            elif event.hardware_keycode == Key.down:
                 oy -= acc
                 y += acc*2
-            elif event.hardware_keycode == 113:  # left
+            elif event.hardware_keycode == Key.left:
                 if x > acc*2:
                     ox += acc
                     x -= acc*2
-            elif event.hardware_keycode == 111:  # up
+            elif event.hardware_keycode == Key.up:
                 if y > acc*2:
                     oy += acc
                     y -= acc*2
         else:
-            if event.hardware_keycode == 114:    # right
+            if event.hardware_keycode == Key.right:
                 x += acc
-            elif event.hardware_keycode == 116:  # down
+            elif event.hardware_keycode == Key.down:
                 y += acc
-            elif event.hardware_keycode == 113:  # left
+            elif event.hardware_keycode == Key.left:
                 x -= acc
-            elif event.hardware_keycode == 111:  # up
+            elif event.hardware_keycode == Key.up:
                 y -= acc
 
         self.window.move(ox, oy)
