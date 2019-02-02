@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # This software uses semantic versioning (SemVer v2.0.0).
-# Copyright: (c) 2015-2016 by Nik Volkov.
+# Copyright: (c) 2015-2018 by Nik Volkov.
 # License: MIT, see LICENSE for more details.
 
 
@@ -14,125 +14,113 @@ import math
 from string import Template
 import os.path
 import gettext
+import time
+import gobject
+import glib
 
 
+__version__ = '1.11.3'
+app_name = 'rackman'
 
-__version__ = '1.11.2'
+TV_RATIOS = {
+        '1.25': '5:4',
+        '1.33': '4:3',
+        '1.50': '3:2',
+        '1.56': '14:9',
+        '1.60': '16:10',
+        '1.78': '16:9',
+    }
 
 
+def set_translate():
+    global _, COLORS
 
-def initial():
-    global window, screen, _, COLORS, icon, config, tv_ratios
+    if os.path.isfile('./locale/ru/LC_MESSAGES/{}.mo'.format(app_name)):
+        trans_path = './locale'  # for local version
+    else:
+        trans_path = '/usr/share/locale'  # for system-wide version
+
+    t = gettext.translation(app_name, trans_path)
+    _ = t.ugettext
+    COLORS = {
+        _('Black'): {
+            'rgb': (0, 0, 0),
+            'key': 'K',
+            'marker': 'Blac_k',
+            'eng_name': 'Black',
+        },
+        _('White'): {
+            'rgb': (1, 1, 1),
+            'key': 'W',
+            'marker': '_White',
+            'eng_name': 'White',
+        },
+        _('Green'): {
+            'rgb': (0, 1, 0),
+            'key': 'G',
+            'marker': '_Green',
+            'eng_name': 'Green',
+        },
+        _('Blue'): {
+            'rgb': (0, 0, 1),
+            'key': 'B',
+            'marker': '_Blue',
+            'eng_name': 'Blue',
+        },
+        _('Red'): {
+            'rgb': (1, 0, 0),
+            'key': 'R',
+            'marker': '_Red',
+            'eng_name': 'Red',
+        },
+        _('Orange'): {
+            'rgb': (1, 0.5, 0),
+            'key': 'O',
+            'marker': '_Orange',
+            'eng_name': 'Orange',
+        },
+        _('Violet'): {
+            'rgb': (0.5, 0, 0.5),
+            'key': 'V',
+            'marker': '_Violet',
+            'eng_name': 'Violet',
+        },
+        _('Pink'): {
+            'rgb': (1, 0.5, 1),
+            'key': 'P',
+            'marker': '_Pink',
+            'eng_name': 'Pink',
+        },
+    }
 
 
+def set_config():
+    global config
 
     config = {}
-
     conf_file_name = "rackman.conf"
     conf_path_curdir = os.path.join('./', conf_file_name)
     conf_path_share = os.path.join('/usr/share/rackman/', conf_file_name)
     conf_path_home = os.path.join(os.path.expanduser('~'), '.config/rackman/', conf_file_name)
-
     conf_paths = (conf_path_share, conf_path_home, conf_path_curdir)
     for conf_path in conf_paths:
-        if os.path.isfile( conf_path ):
-            print "Read config {}".format(conf_path)
-            execfile(conf_path, config)    # чтение предустановок из файла конфигурации
+        if os.path.isfile(conf_path):
+            print("Read config {}".format(conf_path))
+            execfile(conf_path, config)  # чтение предустановок из файла конфигурации
 
 
-
-    window = gtk.Window()
-    screen = window.get_screen()
-
-
-
-    app_name = 'rackman'
-
-    if os.path.isfile( './locale/ru/LC_MESSAGES/{}.mo'.format(app_name) ):
-        trans_path = './locale'
-    else:
-        trans_path = '/usr/share/locale'
-
-    t = gettext.translation(app_name, trans_path)
-    _ = t.ugettext
-
-
-
-    COLORS = {
-                    _('Black'): {
-                                    'rgb': (0, 0, 0),
-                                    'key': 'K',
-                                    'marker': 'Blac_k',
-                                    'eng_name': 'Black',
-                    },
-                    _('White'): {
-                                    'rgb': (1, 1, 1),
-                                    'key': 'W',
-                                    'marker': '_White',
-                                    'eng_name': 'White',
-                    },
-                    _('Green'): {
-                                    'rgb': (0, 1, 0),
-                                    'key': 'G',
-                                    'marker': '_Green',
-                                    'eng_name': 'Green',
-                    },
-                    _('Blue'): {
-                                    'rgb': (0, 0, 1),
-                                    'key': 'B',
-                                    'marker': '_Blue',
-                                    'eng_name': 'Blue',
-                    },
-                    _('Red'): {
-                                    'rgb': (1, 0, 0),
-                                    'key': 'R',
-                                    'marker': '_Red',
-                                    'eng_name': 'Red',
-                    },
-                    _('Orange'): {
-                                    'rgb': (1, 0.5, 0),
-                                    'key': 'O',
-                                    'marker': '_Orange',
-                                    'eng_name': 'Orange',
-                    },
-                    _('Violet'): {
-                                    'rgb': (0.5, 0, 0.5),
-                                    'key': 'V',
-                                    'marker': '_Violet',
-                                    'eng_name': 'Violet',
-                    },
-                    _('Pink'): {
-                                    'rgb': (1, 0.5, 1),
-                                    'key': 'P',
-                                    'marker': '_Pink',
-                                    'eng_name': 'Pink',
-                    },
-    }
-
-
-    tv_ratios = {
-                    '1.25': '5:4',
-                    '1.33': '4:3',
-                    '1.50': '3:2',
-                    '1.56': '14:9',
-                    '1.60': '16:10',
-                    '1.78': '16:9',
-    }
-
-
+def set_icon():
+    global icon
 
     icon_file_name = 'rackman.svg'
     icon_path_curdir = os.path.join('./', icon_file_name)
     icon_path_share = os.path.join('/usr/share/icons/hicolor/scalable/apps/', icon_file_name)
-
-    if os.path.isfile( icon_path_curdir ):
+    if os.path.isfile(icon_path_curdir):
         icon_path = icon_path_curdir
     else:
         icon_path = icon_path_share
 
     icon = gtk.gdk.pixbuf_new_from_file(icon_path)
-
-
 
 
 class Key:
@@ -212,9 +200,8 @@ class Master:
         self.window.set_resizable(False)
         self.window.set_title( config['master_title'] )
         self.window.set_icon(icon)
-        self.window.set_keep_above(config['master_above'])
+        self.window.set_keep_above( config['master_above'] )
         self.window.connect("destroy", lambda w: gtk.main_quit())
-
 
         tableH = gtk.Table(rows=5, columns=4, homogeneous=False)
         self.window.add(tableH)
@@ -293,18 +280,119 @@ class Master:
         var.show()
         tableH.attach(var, 3,4, *sub_value_row)
 
-
-        self.menu_items = ( generate_menu(self) )
-
         menubar = self.get_main_menu()
         tableH.attach(menubar, 0,4, *menu_row)
         menubar.show()
 
         self.ev = gtk.gdk.Event(gtk.gdk.EXPOSE)
 
-
         self.window.show()
 
+    @property
+    def menu_items(self):
+        if not hasattr(self, '__cached_menu_items'):
+            self.__cached_menu_items = self.generate_menu()
+
+        return self.__cached_menu_items
+
+    def generate_menu(self):
+        items = []
+
+        self.generate_menu_backgrounds(items)
+        self.generate_menu_foregrounds(items)
+        self.generate_menu_opacity(items)
+        self.generate_menu_metrics(items)
+        self.generate_menu_tools(items)
+
+        return items
+
+    def generate_menu_tools(self, items):
+        t = _('_Tools')
+
+        items.append(('/{}'.format(t), None, None, 0, '<Branch>'))
+        items.append(('/{}/{}'.format(t, _('Rotate')), '<ctrl>R', self.size_change, 1, '<Item>'))
+        items.append(('/{}/{}'.format(t, _('Fix 100%')), '<ctrl>F', self.fix_percent, 2, '<Item>'))
+        items.append(('/{}/{}'.format(t, _('Magnifier')), '<ctrl>M', self.toggle_magnifier, 3, '<Item>'))
+        items.append(('/{}/{}'.format(t, _('Help')), '<ctrl>H', self.open_help, 4, '<Item>'))
+
+    def generate_menu_metrics(self, items):
+        m = _('_Metric')
+        m_ = _('Metric')
+        link = '/{}/px'.format(m_)
+        mc = self.metric_change
+
+        items.append(('/{}'.format(m), None, None, 0, '<Branch>'))
+        items.append(('/{}/p_x'.format(m), None, mc, 1, '<RadioItem>'))
+        items.append(('/{}/_mm'.format(m), None, mc, 2, link))
+        items.append(('/{}/_in'.format(m), None, mc, 3, link))
+        items.append(('/{}/_pt (Adobe)'.format(m), None, mc, 4, link))
+
+    def generate_menu_opacity(self, items):
+        o = _('_Opacity')
+        o_ = _('Opacity')
+        oc = self.opacity_change
+        opacity_value = int(config['slave_opacity'] * 100)
+        link = '/{}/{}'.format(o_, opacity_value)
+
+        items.append(('/{}'.format(o), None, None, 0, '<Branch>'))
+        opacitys = range(10, 101, 10)
+        for i in opacitys:
+            if i == opacity_value:
+                key = '<ctrl>{}'.format(str(i)[-2])
+                items.append(('/{}/_{}'.format(o, i), key, oc, i, '<RadioItem>'))
+        for i in opacitys:
+            if i != opacity_value:
+                key = '<ctrl>{}'.format(str(i)[-2])
+                if i == 100:
+                    mark = '/{}/10_0'.format(o)
+                else:
+                    mark = '/{}/_{}'.format(o, i)
+                items.append((mark, key, oc, i, link))
+
+    def generate_menu_foregrounds(self, items):
+        f = _('_Foreground')
+        f_ = _('Foreground')
+        cc = self.color_change
+        color = config['foreground_color']
+        link = '/{}/{}'.format(f_, _(color))
+
+        items.append(('/{}'.format(f), None, None, 0, '<Branch>'))
+        for i in COLORS:
+            C = COLORS[i]
+            if C['eng_name'] == color:
+                key = '<ctrl><shift>{}'.format(C['key'])
+                items.append(('/{}/{}'.format(f, _(C['marker'])), key, cc, 1, '<RadioItem>'))
+        for i in COLORS:
+            C = COLORS[i]
+            if C['eng_name'] is not color:
+                key = '<ctrl><shift>{}'.format(C['key'])
+                items.append(('/{}/{}'.format(f, _(C['marker'])), key, cc, 2, link))
+
+    def generate_menu_backgrounds(self, items):
+        b = _('_Background')
+        b_ = _('Background')
+        cc = self.color_change
+        color = config['background_color']
+        link = '/{}/{}'.format(b_, _(color))
+
+        items.append(('/{}'.format(b), None, None, 0, '<Branch>'))
+        for i in COLORS:
+            C = COLORS[i]
+            if C['eng_name'] == color:
+                key = '<alt><shift>{}'.format(C['key'])
+                items.append(('/{}/{}'.format(b, _(C['marker'])), key, cc, 1, '<RadioItem>'))
+        for i in COLORS:
+            C = COLORS[i]
+            if C['eng_name'] is not color:
+                key = '<alt><shift>{}'.format(C['key'])
+                items.append(('/{}/{}'.format(b, _(C['marker'])), key, cc, 2, link))
+
+    def toggle_magnifier(self, ret, widget):
+        if hasattr(screenshot, 'window'):
+            screenshot.window.destroy()
+        else:
+            screenshot.build_window()
+            screenshot.set_timeout()
 
     def open_help(self, ret, widget):
         import webbrowser
@@ -313,27 +401,26 @@ class Master:
             '/usr/share/doc/rackman/html/ru/index.html',
         )
         for url in urls:
-            print 'Try open {}'.format(url)
+            print('Try open {}'.format(url))
             if os.path.isfile(url):
-                print '\t ...open in webbrowser'
+                print('\t ...open in webbrowser')
                 webbrowser.open(url)
                 break
-
 
     def color_change(self, ret, widget):
         color_name = widget.name.split('/')[-1]
         color_context = widget.name.split('/')[-2]
+        rgb = COLORS[ _(color_name) ]['rgb']
 
         if color_context == _('Background'):
-            slave.background = COLORS[ _(color_name) ]['rgb']
+            slave.background = rgb
         elif color_context == _('Foreground'):
-            slave.foreground = COLORS[ _(color_name) ]['rgb']
+            slave.foreground = rgb
         else:
             raise ValueError( "Unknown color_context: {}".format(color_context) )
 
         self.ev.area = slave.ea
         slave.area.emit("expose-event", self.ev)
-
 
     def opacity_change(self, ret, widget):
         try:
@@ -343,16 +430,14 @@ class Master:
         except AttributeError:
             self.old_opacity = ret
 
-
     def get_main_menu(self):
         accel_group = gtk.AccelGroup()
 
-        self.item_factory = item_factory = gtk.ItemFactory(gtk.MenuBar, "<main>", accel_group)
+        item_factory = gtk.ItemFactory(gtk.MenuBar, "<main>", accel_group)
         item_factory.create_items(self.menu_items)
         self.window.add_accel_group(accel_group)
 
         return item_factory.get_widget("<main>")
-
 
     def metric_change(self, ret, widget):
         metric_name = widget.name.split('/')[-1].lower()
@@ -362,11 +447,9 @@ class Master:
         slave.metric = tuple(slave.metric)
         slave.window.emit("check-resize")   # обновление показателей
 
-
     def size_change(self, ret, widget):
         w, h = slave.window.get_size()
         slave.window.resize(h, w)
-
 
     def fix_percent(self, ret, widget):
         w, h = slave.window.get_size()
@@ -374,12 +457,11 @@ class Master:
         slave.window.emit("check-resize")   # обновление показателей
 
 
-
-class Slave:
+class Slave():
     def __init__(self, parent):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_decorated(False)
-        self.window.set_title( config['slave_title'] )
+        self.window.set_title(config['slave_title'])
         self.window.set_icon(icon)
         self.window.set_resizable(True)
         self.window.set_keep_above(config['slave_above'])
@@ -387,7 +469,7 @@ class Slave:
             self.window.set_transient_for(parent.window)
         else:
             self.window.set_transient_for(None)
-        self.window.set_opacity( config['slave_opacity'] )
+        self.window.set_opacity(config['slave_opacity'])
 
         self.parent = parent
         self.metric = ('px', 1, 0, 2)
@@ -405,62 +487,58 @@ class Slave:
         self.area.show()
         self.window.show()
 
-
-        self.window.add_events(gtk.gdk.KEY_PRESS_MASK)
-        self.window.add_events(gtk.gdk.BUTTON_PRESS_MASK)
-
-        self.window.connect("check-resize", self.resize_window)
-        self.window.connect("key-press-event", self.resizing)
-        self.area.connect("expose-event", self.draw_cairo)
-
+        self.window.connect("check_resize", self.resize_window)
+        self.window.connect("key_press_event", self.resizing)
+        self.area.connect("expose_event", self.draw_cairo)
 
     def resizing(self, widget, event):
         x, y = widget.get_size()
         ox, oy = widget.get_position()
+        keycode = event.hardware_keycode
 
         acc = 1
         if event.state & gtk.gdk.SHIFT_MASK:
             acc = config['fast_mode_speed']
 
+        # TODO: Объединить
         if event.state & gtk.gdk.CONTROL_MASK:
-            if event.hardware_keycode == Key.right:
+            if keycode == Key.right:
                 ox += acc
-            elif event.hardware_keycode == Key.down:
+            elif keycode == Key.down:
                 oy += acc
-            elif event.hardware_keycode == Key.left:
+            elif keycode == Key.left:
                 ox -= acc
-            elif event.hardware_keycode == Key.up:
+            elif keycode == Key.up:
                 oy -= acc
         elif event.state & gtk.gdk.MOD1_MASK:   # ~ alt
-            if event.hardware_keycode == Key.right:
+            if keycode == Key.right:
                 ox -= acc
                 x += acc*2
-            elif event.hardware_keycode == Key.down:
+            elif keycode == Key.down:
                 oy -= acc
                 y += acc*2
-            elif event.hardware_keycode == Key.left:
+            elif keycode == Key.left:
                 if x > acc*2:
                     ox += acc
                     x -= acc*2
-            elif event.hardware_keycode == Key.up:
+            elif keycode == Key.up:
                 if y > acc*2:
                     oy += acc
                     y -= acc*2
         else:
-            if event.hardware_keycode == Key.right:
+            if keycode == Key.right:
                 x += acc
-            elif event.hardware_keycode == Key.down:
+            elif keycode == Key.down:
                 y += acc
-            elif event.hardware_keycode == Key.left:
+            elif keycode == Key.left:
                 x -= acc
-            elif event.hardware_keycode == Key.up:
+            elif keycode == Key.up:
                 y -= acc
 
         self.window.move(ox, oy)
         self.window.resize(x, y)
 
         return True
-
 
     def resize_window(self, widget):
         dpm = self.get_monitor()
@@ -503,8 +581,8 @@ class Slave:
             ratio = float(h) / w
 
         r = str( round(ratio, 3) )
-        if r in tv_ratios.keys():
-            ratio_tv = '({})'.format( tv_ratios[r] )
+        if r in TV_RATIOS.keys():
+            ratio_tv = '({})'.format(TV_RATIOS[r])
         else:
             ratio_tv = ''
 
@@ -522,8 +600,9 @@ class Slave:
 
         return True
 
-
     def get_monitor(self):
+        window = gtk.Window()
+        screen = window.get_screen()
         gdk_win = gtk.Widget.get_window(self.window)   # получаем gdk.Window из gtk.Window
         curmon = screen.get_monitor_at_window(gdk_win)
 
@@ -531,64 +610,60 @@ class Slave:
         _mm = screen.get_monitor_width_mm(curmon)
 
         dpm = float(_px) / float(_mm)
-
         return dpm
 
-
     def draw_cairo(self, area, event):
+        """ Отрисовывает измерительные метки в окне измерителя """
         self.context = area.window.cairo_create()
         self.ea = event.area
 
-        # background
-        self.context.set_source_rgb(*self.background)
+        self.draw_background(event)
+        self.context.set_source_rgb(*self.foreground)    # foreground
+        self.draw_border(event)
+        self.draw_diagonals(event)
+        self.draw_verticals(event)
 
+        return True
+
+    def draw_verticals(self, event):
+        self.context.set_line_width(1)
+        self.context.set_dash([3, 3])
+        self.context.move_to(event.area.width / 2.0, 0)
+        self.context.line_to(event.area.width / 2.0, event.area.height)
+        self.context.stroke()
+        self.context.move_to(0, event.area.height / 2.0)
+        self.context.line_to(event.area.width, event.area.height / 2.0)
+        self.context.stroke()
+
+    def draw_diagonals(self, event):
+        self.context.set_line_width(1)
+        self.context.move_to(0, 0)
+        self.context.line_to(event.area.width, event.area.height)
+        self.context.stroke()
+        self.context.move_to(event.area.width, 0)
+        self.context.line_to(0, event.area.height)
+        self.context.stroke()
+
+    def draw_border(self, event):
+        self.context.set_line_width(1)
+        self.context.rectangle(1, 1, event.area.width - 2, event.area.height - 2)
+        self.context.stroke()
+
+    def draw_background(self, event):
+        self.context.set_source_rgb(*self.background)
         self.context.rectangle(0, 0, event.area.width, event.area.height)
         self.context.fill()
         self.context.stroke()
 
 
-        self.context.set_source_rgb(*self.foreground)    # foreground
-
-        # border
-        self.context.set_line_width(1)
-
-        self.context.rectangle(1, 1, event.area.width-2, event.area.height-2)
-        self.context.stroke()
-
-        # diagonals
-        self.context.set_line_width(1)
-
-        self.context.move_to(0, 0)
-        self.context.line_to(event.area.width, event.area.height)
-        self.context.stroke()
-
-        self.context.move_to(event.area.width, 0)
-        self.context.line_to(0, event.area.height)
-        self.context.stroke()
-
-        # verticals
-        self.context.set_line_width(1)
-        self.context.set_dash([3,3])
-
-        self.context.move_to(event.area.width/2.0, 0)
-        self.context.line_to(event.area.width/2.0, event.area.height)
-        self.context.stroke()
-
-        self.context.move_to(0, event.area.height/2.0)
-        self.context.line_to(event.area.width, event.area.height/2.0)
-        self.context.stroke()
-
-        return False
-
-
-
 if __name__ == "__main__":
-    print "Rackman ver. {}".format(__version__)
+    print("Rackman ver. {}".format(__version__))
 
-    initial()
+    set_config()
+    set_translate()
+    set_icon()
 
     base = Master()
     slave = Slave(base)
     slave.window.emit("check-resize")
-
     gtk.main()
