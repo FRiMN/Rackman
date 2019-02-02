@@ -130,67 +130,80 @@ class Key:
     right = 114
 
 
+class Screenshot:
+    def __init__(self, parent, slave):
+        self.parent = parent
+        self.slave = slave
 
+        self.img_width = 100
+        self.img_height = 100
 
+        self.zoom = 2
+        self.grab_rate = 15
 
+    def build_window(self):
+        self.image = gtk.Image()
+        self.image.show()
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window.set_title('Rackman magnifier')
+        self.window.set_icon(icon)
+        self.window.set_resizable(False)
+        self.window.set_keep_above(config['slave_above'])
+        self.window.add(self.image)
+        self.window.connect("destroy", self.destroy_window)
+        self.grab_timeout = None
+        self.window.resize(200, 200)
+        self.window.show()
 
-def generate_menu(self):
-    items = []
+    def destroy_window(self, w):
+        self.window.destroy()
+        del self.window
 
-    # backgrounds
-    items.append( ('/{}'.format( _('_Background') ), None, None, 0, '<Branch>') )
+    def set_timeout(self):
+        """ Set timer for magnifier grabbing """
+        if hasattr(self, 'window') and self.grab_timeout == None:
+            self.grab_timeout = glib.timeout_add(1000 / self.grab_rate, self.take)
+            self.window.show()
 
-    for i in COLORS:
-        C = COLORS[i]
-        if C['eng_name'] == config['background_color']:
-            items.append( ('/{}/{}'.format( _('Background'), _(C['marker']) ), '<alt><shift>{}'.format(C['key']), self.color_change, 1, '<RadioItem>') )
-    for i in COLORS:
-        C = COLORS[i]
-        if C['eng_name'] is not config['background_color']:
-            items.append( ('/{}/{}'.format( _('Background'), _(C['marker']) ), '<alt><shift>{}'.format(C['key']), self.color_change, 2, '/{}/{}'.format( _('Background'), _(config['background_color']))) )
+    def take(self):
+        """ Magnifier grab image """
+        if hasattr(self, 'window'):
+            _x, _y = self.slave.window.get_position()
+            _width, _height = self.slave.window.get_size()
 
-    # foregrounds
-    items.append( ('/{}'.format( _('_Foreground') ), None, None, 0, '<Branch>') )
+            x = _x - 25
+            y = _y - 25
+            width = _width + 50
+            height = _height + 50
 
-    for i in COLORS:
-        C = COLORS[i]
-        if C['eng_name'] == config['foreground_color']:
-            items.append( ('/{}/{}'.format( _('Foreground'), _(C['marker']) ), '<ctrl><shift>{}'.format(C['key']), self.color_change, 1, '<RadioItem>') )
-    for i in COLORS:
-        C = COLORS[i]
-        if C['eng_name'] is not config['foreground_color']:
-            items.append( ('/{}/{}'.format( _('Foreground'), _(C['marker']) ), '<ctrl><shift>{}'.format(C['key']), self.color_change, 2, '/{}/{}'.format( _('Foreground'), _(config['foreground_color']))) )
+            pxbf = gtk.gdk.Pixbuf(
+                gtk.gdk.COLORSPACE_RGB,
+                False,
+                8,
+                width,
+                height
+            )
 
-    # opacity
-    items.append( ('/{}'.format(    _('_Opacity') ), None, None, 0, '<Branch>') )
+            pxbf.get_from_drawable(
+                gtk.gdk.get_default_root_window(),
+                gtk.gdk.colormap_get_system(),
+                x, y, 0, 0,
+                width,
+                height
+            )
 
-    opacitys = range(10, 101, 10)
-    for i in opacitys:
-        if i == config['slave_opacity'] * 100:
-            items.append( ('/{}/_{}'.format( _('Opacity'), i ), '<ctrl>{}'.format(str(i)[-2]), self.opacity_change, i, '<RadioItem>') )
-    for i in opacitys:
-        if i != config['slave_opacity'] * 100:
-            if i == 100:
-                items.append( ('/{}/10_0'.format( _('Opacity') ), '<ctrl>{}'.format(str(i)[-2]), self.opacity_change, i, '/{}/{}'.format( _('Opacity'), int(config['slave_opacity'] * 100) )) )
-            else:
-                items.append( ('/{}/_{}'.format( _('Opacity'), i ), '<ctrl>{}'.format(str(i)[-2]), self.opacity_change, i, '/{}/{}'.format( _('Opacity'), int(config['slave_opacity'] * 100) )) )
+            pxbf_scaled = pxbf.scale_simple(
+                width * self.zoom,
+                height * self.zoom,
+                gtk.gdk.INTERP_BILINEAR
+            )
 
-    items.append( ('/{}'.format(   _('_Metric') ),                    None,               None,                   0,  '<Branch>') )
-    items.append( ('/{}/p_x'.format(_('Metric') ),                    None,               self.metric_change,     1,  '<RadioItem>') )
-    items.append( ('/{}/_mm'.format(_('Metric') ),                    None,               self.metric_change,     2,  '/{}/px'.format( _('Metric') )) )
-    items.append( ('/{}/_in'.format(_('Metric') ),                    None,               self.metric_change,     3,  '/{}/px'.format( _('Metric') )) )
-    items.append( ('/{}/_pt (Adobe)'.format( _('Metric') ),           None,               self.metric_change,     4,  '/{}/px'.format( _('Metric') )) )
+            self.image.set_from_pixbuf(pxbf_scaled)
+            # self.window.resize(width, height)
 
-    items.append( ('/{}'.format(    _('_Tools') ),                    None,               None,                   0,  '<Branch>') )
-    items.append( ('/{}/{}'.format( _('Tools'), _('Rotate') ),        '<ctrl>R',          self.size_change,       1,  '<Item>') )
-    items.append( ('/{}/{}'.format( _('Tools'), _('Fix 100%') ),      '<ctrl>F',          self.fix_percent,       2,  '<Item>') )
-    items.append( ('/{}/{}'.format( _('Tools'), _('Help') ),          '<ctrl>H',          self.open_help,         3,  '<Item>') )
-
-    return items
-
-
-
-
+            self.grab_timeout = None
+            self.set_timeout()
+        return False
 
 
 class Master:
@@ -663,8 +676,10 @@ if __name__ == "__main__":
     set_translate()
     set_icon()
 
-    global base, slave
+    global base, slave, screenshot
     base = Master()
     slave = Slave(base)
+    screenshot = Screenshot(base, slave)
+
     slave.window.emit("check-resize")
     gtk.main()
