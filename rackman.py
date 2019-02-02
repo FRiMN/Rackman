@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # This software uses semantic versioning (SemVer v2.0.0).
-# Copyright: (c) 2015-2018 by Nik Volkov.
+# Copyright: (c) 2015-2019 by Nik Volkov.
 # License: MIT, see LICENSE for more details.
 
 

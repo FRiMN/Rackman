@@ -75,6 +75,6 @@ https://github.com/msva/mva-overlay/blob/master/x11-misc/rackman/rackman-9999.eb
 MIT License
 
 ## Authors
-(C) 2015-2016 Николай Волков <freezemandix@ya.ru>
+(C) 2015-2019 Николай Волков <freezemandix@ya.ru>
 
 <https://github.com/FRiMN/Rackman>
