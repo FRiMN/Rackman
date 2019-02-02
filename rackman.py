@@ -663,6 +663,7 @@ if __name__ == "__main__":
     set_translate()
     set_icon()
 
+    global base, slave
     base = Master()
     slave = Slave(base)
     slave.window.emit("check-resize")
