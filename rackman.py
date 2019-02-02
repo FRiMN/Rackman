@@ -19,7 +19,7 @@ import gobject
 import glib
 
 
-__version__ = '1.11.3'
+__version__ = '1.12.0'
 app_name = 'rackman'
 
 TV_RATIOS = {
