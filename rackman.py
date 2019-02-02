@@ -130,7 +130,7 @@ class Key:
     right = 114
 
 
-class Screenshot:
+class Magnifier:
     def __init__(self, parent, slave):
         self.parent = parent
         self.slave = slave
@@ -401,11 +401,11 @@ class Master:
                 items.append(('/{}/{}'.format(b, _(C['marker'])), key, cc, 2, link))
 
     def toggle_magnifier(self, ret, widget):
-        if hasattr(screenshot, 'window'):
-            screenshot.window.destroy()
+        if hasattr(magnifier, 'window'):
+            magnifier.window.destroy()
         else:
-            screenshot.build_window()
-            screenshot.set_timeout()
+            magnifier.build_window()
+            magnifier.set_timeout()
 
     def open_help(self, ret, widget):
         import webbrowser
@@ -676,10 +676,10 @@ if __name__ == "__main__":
     set_translate()
     set_icon()
 
-    global base, slave, screenshot
+    global base, slave, magnifier
     base = Master()
     slave = Slave(base)
-    screenshot = Screenshot(base, slave)
+    magnifier = Magnifier(base, slave)
 
     slave.window.emit("check-resize")
     gtk.main()
