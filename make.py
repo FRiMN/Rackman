@@ -27,7 +27,7 @@ def build_deb():
         # https://docs.python.org/2/distutils/introduction.html#distutils-simple-example
         os.chdir( basedir )
         subprocess.call("python setup.py sdist", shell=True)
-    except OSError, e:
+    except OSError as e:
         click.echo("ERR: setup.py sdist; {}".format(e), err=True)
         sys.exit(os.EX_OSERR)
 
@@ -35,7 +35,7 @@ def build_deb():
         # https://pypi.python.org/pypi/stdeb/#debianize-distutils-command
         os.chdir( "{}/dist".format(basedir) )
         subprocess.call("py2dsc --suite='{}' Rackman-{}.tar.gz".format(RELEASE, VERSION), shell=True)
-    except OSError, e:
+    except OSError as e:
         click.echo("ERR: py2dsc --suite='{}' Rackman-{}.tar.gz; {}".format(RELEASE, VERSION, e), err=True)
         sys.exit(os.EX_OSERR)
 
@@ -45,7 +45,7 @@ def build_deb():
         subprocess.call("sed -i -- '/^Build-Depends:/ s/$/, python-gtk2 (>=2.24.0), python-cairo (>=1.8.8)/g' ./debian/control", shell=True)
         subprocess.call("sed -i -- 's/python-rackman/rackman/g' ./debian/control ./debian/rules", shell=True)
         subprocess.call("dpkg-buildpackage -rfakeroot -uc -us", shell=True)
-    except OSError, e:
+    except OSError as e:
         click.echo("ERR: dpkg-buildpackage -rfakeroot -uc -us; {}".format(e), err=True)
         sys.exit(os.EX_OSERR)
 
@@ -54,7 +54,7 @@ def build_deb():
         # https://help.launchpad.net/Packaging/PPA/BuildingASourcePackage
         os.chdir( "{}/dist/deb_dist/rackman-{}".format(basedir, VERSION) )
         subprocess.call("debuild -S -sa -k$GPGKEY", shell=True)
-    except OSError, e:
+    except OSError as e:
         click.echo("ERR: debuild -S -sa -k$GPGKEY; {}".format(e), err=True)
         sys.exit(os.EX_OSERR)
 
@@ -67,7 +67,7 @@ def push():
     try:
         os.chdir( "{}/dist/deb_dist/".format(basedir) )
         subprocess.call(comm, shell=True)
-    except OSError, e:
+    except OSError as e:
         click.echo("ERR: {}; {}".format(comm, e), err=True)
         sys.exit(os.EX_OSERR)
 
@@ -80,13 +80,13 @@ def clean():
     path = os.path.join(basedir, 'dist')
     try:
         shutil.rmtree(path)
-    except OSError, e:
+    except OSError as e:
         click.echo("ERR: remove {}; {}".format(path, e), err=True)
 
     path = os.path.join(basedir, 'build')
     try:
         shutil.rmtree(path)
-    except OSError, e:
+    except OSError as e:
         click.echo("ERR: remove {}; {}".format(path, e), err=True)
 
 
@@ -97,11 +97,19 @@ def build_doc(html, man):
     """Building documentation from README.md"""
     # Building html page
     if html:
-        comm = "pandoc --standalone --self-contained --smart --normalize -V lang:russian -f markdown -t html -o ./doc/html/ru/index.html README.md"
+        comm = "pandoc " \
+               "--standalone " \
+               "--self-contained " \
+               "--smart " \
+               "--normalize " \
+               "-V lang:russian " \
+               "-f markdown " \
+               "-t html " \
+               "-o ./doc/html/ru/index.html README.md"
         try:
             os.chdir( basedir )
             subprocess.call(comm, shell=True)
-        except OSError, e:
+        except OSError as e:
             click.echo("ERR: {}; {}".format(comm, e), err=True)
             sys.exit(os.EX_OSERR)
 
@@ -109,8 +117,16 @@ def build_doc(html, man):
     if man:
         from datetime import datetime
         import gzip, shutil
-        comm = "pandoc --standalone --self-contained --smart --normalize -V lang:russian -f markdown -t man -o ./doc/man/ru/rackman README.md"
-        date = datetime.today().strftime('%Y-%m-%d')
+        comm = "pandoc " \
+               "--standalone " \
+               "--self-contained " \
+               "--smart " \
+               "--normalize " \
+               "-V lang:russian " \
+               "-f markdown " \
+               "-t man " \
+               "-o ./doc/man/ru/rackman README.md"
+        date = datetime.today().strftime('%Y-%m-%destroy_window')
         try:
             os.chdir( basedir )
             subprocess.call(comm, shell=True)
@@ -121,7 +137,7 @@ def build_doc(html, man):
             # compressing man page (rackman -> rackman.1.gz)
             with open(os.path.join(basedir, 'doc/man/ru/rackman'), 'rb') as f_in, gzip.open(os.path.join(basedir, 'doc/man/ru/rackman.1.gz'), 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
-        except OSError, e:
+        except OSError as e:
             click.echo("ERR: {}; {}".format(comm, e), err=True)
             sys.exit(os.EX_OSERR)
 
@@ -137,11 +153,16 @@ def build_lang(update, merge, add, build, lang):
     # https://help.launchpad.net/Translations/POTemplates
 
     if update:
-        comm = 'xgettext -k_ -kN_ --package-version={} --package-name=rackman --copyright-holder="by Nik Volkov" --msgid-bugs-address=freezemandix@ya.ru -o messages.pot rackman.py'.format(VERSION)
+        comm = 'xgettext -k_ -kN_ ' \
+               '--package-version={} ' \
+               '--package-name=rackman ' \
+               '--copyright-holder="by Nik Volkov" ' \
+               '--msgid-bugs-address=freezemandix@ya.ru ' \
+               '-o messages.pot rackman.py'.format(VERSION)
         try:
             os.chdir( basedir )
             subprocess.call(comm, shell=True)
-        except OSError, e:
+        except OSError as e:
             click.echo("ERR: {}; {}".format(comm, e), err=True)
             sys.exit(os.EX_OSERR)
 
@@ -150,7 +171,7 @@ def build_lang(update, merge, add, build, lang):
         try:
             os.chdir( basedir )
             subprocess.call(comm, shell=True)
-        except OSError, e:
+        except OSError as e:
             click.echo("ERR: {}; {}".format(comm, e), err=True)
             sys.exit(os.EX_OSERR)
 
@@ -159,7 +180,7 @@ def build_lang(update, merge, add, build, lang):
         try:
             os.chdir( basedir )
             subprocess.call(comm, shell=True)
-        except OSError, e:
+        except OSError as e:
             click.echo("ERR: {}; {}".format(comm, e), err=True)
             sys.exit(os.EX_OSERR)
 
@@ -171,7 +192,7 @@ def build_lang(update, merge, add, build, lang):
             if os.path.isdir(path) is False:
                 os.makedirs(path)
             subprocess.call(comm, shell=True)
-        except OSError, e:
+        except OSError as e:
             click.echo("ERR: {}; {}".format(comm, e), err=True)
             sys.exit(os.EX_OSERR)
 
