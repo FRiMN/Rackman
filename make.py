@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
 import click
@@ -23,22 +23,27 @@ def cli():
 def build_deb():
     """Building DEB package"""
 
+    click.secho('*** Creating distribution archive...', fg='yellow')
+    comm = "python setup.py sdist"
     try:
         # https://docs.python.org/2/distutils/introduction.html#distutils-simple-example
         os.chdir( basedir )
-        subprocess.call("python setup.py sdist", shell=True)
+        subprocess.call(comm, shell=True)
     except OSError as e:
-        click.echo("ERR: setup.py sdist; {}".format(e), err=True)
+        click.echo("ERR: {}; {}".format(comm, e), err=True)
         sys.exit(os.EX_OSERR)
 
+    click.secho('*** Transforming to debain package from distribution archive...', fg='yellow')
+    comm = "py2dsc --suite='{}' Rackman-{}.tar.gz".format(RELEASE, VERSION)
     try:
         # https://pypi.python.org/pypi/stdeb/#debianize-distutils-command
         os.chdir( "{}/dist".format(basedir) )
-        subprocess.call("py2dsc --suite='{}' Rackman-{}.tar.gz".format(RELEASE, VERSION), shell=True)
+        subprocess.call(comm, shell=True)
     except OSError as e:
-        click.echo("ERR: py2dsc --suite='{}' Rackman-{}.tar.gz; {}".format(RELEASE, VERSION, e), err=True)
+        click.echo("ERR: {}; {}".format(comm, e), err=True)
         sys.exit(os.EX_OSERR)
 
+    click.secho('*** Configuring and building debian package...', fg='yellow')
     try:
         os.chdir( "{}/dist/deb_dist/rackman-{}".format(basedir, VERSION) )
         subprocess.call("sed -i -- '/^Depends:/ s/$/, python-gtk2 (>=2.24.0), python-cairo (>=1.8.8)/g' ./debian/control", shell=True)
@@ -49,13 +54,15 @@ def build_deb():
         click.echo("ERR: dpkg-buildpackage -rfakeroot -uc -us; {}".format(e), err=True)
         sys.exit(os.EX_OSERR)
 
+    click.secho('*** Signing debian package...', fg='yellow')
+    comm = "debuild -S -sa -k$GPGKEY"
     try:
         # https://help.ubuntu.com/community/GnuPrivacyGuardHowto
         # https://help.launchpad.net/Packaging/PPA/BuildingASourcePackage
         os.chdir( "{}/dist/deb_dist/rackman-{}".format(basedir, VERSION) )
-        subprocess.call("debuild -S -sa -k$GPGKEY", shell=True)
+        subprocess.call(comm, shell=True)
     except OSError as e:
-        click.echo("ERR: debuild -S -sa -k$GPGKEY; {}".format(e), err=True)
+        click.echo("ERR: {}; {}".format(comm, e), err=True)
         sys.exit(os.EX_OSERR)
 
 
@@ -209,6 +216,7 @@ def build_all(ctx):
                 break
 
     ctx.invoke(build_doc, html=True, man=True)
+    ctx.invoke(clean)
     ctx.invoke(build_deb)
 
 
