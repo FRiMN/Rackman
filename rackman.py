@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
 # This software uses semantic versioning (SemVer v2.0.0).
@@ -145,7 +145,7 @@ class Magnifier:
         self.image = gtk.Image()
         self.image.show()
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title('Rackman magnifier')
+        self.window.set_title(_('Rackman magnifier'))
         self.window.set_icon(icon)
         self.window.set_resizable(False)
         self.window.set_keep_above(config['slave_above'])
